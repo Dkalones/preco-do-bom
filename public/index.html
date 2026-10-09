@@ -213,13 +213,13 @@ const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
 const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
 function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
 function askKey(bad){const k=prompt(bad?'Chave inválida. Digite novamente:':'Digite sua chave de acesso:');if(k&&k.trim()){K=k.trim();localStorage.setItem('pdb_key',K);if(bad)location.reload();return true}return false}
-async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json','x-key':K}});if(r.status===429){setStat('Muitas tentativas erradas. Tente de novo em 15 min.');throw 401}if(r.status===401){K='';localStorage.removeItem('pdb_key');setStat('Acesso restrito: recarregue e informe a chave');askKey(true);throw 401}let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||r.status);return{s:r.status,j}}
+async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json','x-key':K}});if(r.status===429){setStat('Muitas tentativas erradas. Tente de novo em 15 min.');throw 401}if(r.status===401){K='';localStorage.removeItem('pdb_key');setStat('Acesso restrito: recarregue e informe a chave');askKey(true);throw 401}let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
 const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
 function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
 async function doPush(){if(!K)return;clearTimeout(tm);const v=ver;try{const r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
   if(r.s===409){if(confirm('Outra pessoa salvou depois da sua última sincronização.\nOK = sobrescrever com as suas alterações\nCancelar = usar a versão da nuvem (as suas ficam em backup)')){S._base=r.j.updatedAt;return doPush()}
     await bk('local');const c=(await api('state')).j;if(c)applyCloud(c);return}
-  S._base=r.j.updatedAt;if(v===ver)S._dirty=0;persist();setStat('Salvo na nuvem ✓')}catch(e){if(e!==401)setStat('Sem conexão com a nuvem – salvo só neste aparelho')}}
+  S._base=r.j.updatedAt;if(v===ver)S._dirty=0;persist();setStat('Salvo na nuvem ✓')}catch(e){if(e!==401)setStat('Erro na nuvem ('+(e&&e.message||e)+') – salvo só neste aparelho')}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&S._dirty)doPush()});
 const tip=t=>`<span class="inf" tabindex="0" data-tip="${t}">i</span>`;
 const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
@@ -411,7 +411,7 @@ renderList();renderEd();
   else{await bk('local');applyCloud(c);return}
   const d=new Date().toISOString().slice(0,10);
   if(localStorage.getItem('pdb_bk')!==d&&S.items.length){await bk('auto');localStorage.setItem('pdb_bk',d)}
- }catch(e){if(e!==401){ok();setStat('Sem conexão com a nuvem – usando os dados deste aparelho')}}
+ }catch(e){if(e!==401){ok();setStat('Erro na nuvem ('+(e&&e.message||e)+') – usando os dados deste aparelho')}}
 })();
 </script>
 </body>
