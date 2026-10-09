@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preço do Bom</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{--bg:#ffffff;--card:#fff;--ink:#1c2b33;--mut:#6b7b84;--line:#dde5e7;--soft:#f5f8f9;--pri:#0f9d7a;--pri2:#e0f5ef;--acc:#e8a317;--bad:#c0392b;--sh:0 1px 2px rgba(31,42,36,.06),0 8px 20px rgba(31,42,36,.05);--fd:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;--fb:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121512;--card:#1b201c;--ink:#eef2ee;--mut:#9aa69d;--line:#2c352f;--soft:#161a17;--pri:#35d0aa;--pri2:#123a31;--acc:#f0b429;--bad:#ef6a5b;--sh:none}}
+:root[data-theme="dark"]{--bg:#121512;--card:#1b201c;--ink:#eef2ee;--mut:#9aa69d;--line:#2c352f;--soft:#161a17;--pri:#35d0aa;--pri2:#123a31;--acc:#f0b429;--bad:#ef6a5b;--sh:none}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--fb)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{display:flex;gap:12px;align-items:center;font:800 21px var(--fd);letter-spacing:-.5px;line-height:1.1}.logo span{color:var(--pri)}
+.logo small{display:block;font:400 12px var(--fb);color:var(--mut);letter-spacing:0;margin-top:2px}
+.mark{width:42px;height:42px;border-radius:13px;background:var(--pri);color:#fff;display:grid;place-items:center;font:800 15px var(--fd);letter-spacing:0;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+main{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;padding:20px;max-width:1400px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:14px}header small{display:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
+h2{font:700 16px var(--fd);margin:0 0 12px;letter-spacing:-.2px}
+label{display:block;font-size:12px;font-weight:500;color:var(--mut);margin-bottom:4px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);font:inherit;min-width:0;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:0;border-color:var(--pri);box-shadow:0 0 0 3px color-mix(in srgb,var(--pri) 22%,transparent)}
+button{font:inherit;font-weight:500;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:10px;transition:background .15s,transform .05s}
+button:hover{background:var(--pri2)}button:active{transform:translateY(1px)}
+button.p{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:600}button.p:hover{filter:brightness(1.1);background:var(--pri)}
+button.x{color:var(--bad);padding:8px 10px;border-color:transparent;background:none}button.x:hover{background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tgl{display:flex;gap:6px}.tgl select{width:64px;padding:10px 4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--sh)}
+.kpi span{display:block;font-size:12px;color:var(--mut)}.kpi b{font:800 22px var(--fd);letter-spacing:-.5px}
+#list{max-height:46vh;overflow:auto;margin-bottom:10px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;background:var(--soft);transition:border-color .15s}
+.item:hover{border-color:var(--pri)}.item.on{border-color:var(--pri);background:var(--pri2);box-shadow:inset 4px 0 0 var(--pri)}
+.item b{display:block;font-weight:600}.item small{color:var(--mut)}
+.pr{font-weight:700;white-space:nowrap;text-align:right}.pr em{display:block;font-style:normal;font-size:11px;font-weight:600;margin-top:1px}
+.ok{color:var(--pri)}.low{color:var(--bad)}
+#add{width:100%}
+#ed{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+#ed>*{grid-column:1;margin:0}
+#ed>.res{grid-column:2;grid-row:1/span 4;position:sticky;top:calc(84px + env(safe-area-inset-top,0px))}
+#ed>.empty{grid-column:1/-1}
+@media(max-width:1380px){#ed{grid-template-columns:1fr}#ed>.res{grid-column:1;grid-row:auto;position:static}}
+.ing{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end;margin-bottom:10px;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:12px}
+.ing>:first-child{grid-column:1/-1}
+@media(max-width:600px){.ing{grid-template-columns:1fr 1fr}}
+.rc{padding:9px 0;font-weight:700}
+.tier{display:grid;grid-template-columns:repeat(5,1fr) 32px;gap:8px;align-items:end;margin-bottom:10px}.tier b{display:block;padding:9px 0}
+@media(max-width:600px){.tier{grid-template-columns:repeat(3,1fr)}}
+.res{background:linear-gradient(160deg,#0a6a54,#0f9d7a);color:#fff;border-radius:18px;padding:20px;box-shadow:0 14px 34px rgba(10,106,84,.3)}
+.res h2{color:#fff}.res .sub{font-size:13px;color:rgba(255,255,255,.75)}
+.big{font:800 42px var(--fd);letter-spacing:-1.5px;line-height:1.1;margin-bottom:4px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:14px}.row:last-child{border:0}
+.res label,.res .tip{color:rgba(255,255,255,.78)}.res input{background:#fff;color:#1f2a24}
+.res button{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25);font-size:13px;padding:7px 10px}.res button:hover{background:rgba(255,255,255,.26)}
+.res .warn{color:#ffd7cf}
+.tip{font-size:13px;color:var(--mut);margin:10px 0 0}.warn{color:var(--bad);font-weight:600}
+.ex{display:flex;flex-wrap:wrap;gap:8px}
+.expw{position:relative}
+.menu{display:none;position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.2);padding:6px;min-width:240px}.menu.open{display:block}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;border-radius:9px}.menu button:hover{background:var(--pri2)}.menu small{display:block;color:var(--mut);font-size:12px;font-weight:400}
+.empty{text-align:center;padding:46px 20px}.empty h2{font-size:22px}.empty p{color:var(--mut);max-width:440px;margin:0 auto 16px}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 20px 28px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;display:none;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+
+.app{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.side{background:#1e2b33;color:#c9d6dc;padding:18px 12px;display:flex;flex-direction:column;gap:18px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;align-self:start}
+.biz{display:flex;gap:10px;align-items:center;padding:6px 8px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.av{width:42px;height:42px;flex:none;border-radius:50%;border:2px solid #35d0aa;display:grid;place-items:center;font:700 14px var(--fd);color:#fff;background:#2a3a44}
+.biz b{display:block;color:#fff;font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.biz small{color:#8fa3ad;font-size:12px}
+.menu-n{display:flex;flex-direction:column;gap:2px;flex:1}
+.menu-n button{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;color:#c9d6dc;padding:11px 12px;border-radius:10px}
+.menu-n button:hover{background:rgba(255,255,255,.07)}.menu-n button.on{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 3px 0 0 #35d0aa}
+.side svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.brand{display:flex;gap:10px;align-items:center;color:#fff;font:800 16px var(--fd)}.brand span{color:#35d0aa}.brand .mark{width:32px;height:32px;font-size:12px;border-radius:10px}
+.content{padding:24px;max-width:1300px;width:100%}.view[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.ph h1{font:800 24px var(--fd);margin:0;letter-spacing:-.5px}
+.split{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}.split>.card{margin:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:1100px){.split,.cols{grid-template-columns:1fr}}
+.trow{display:grid;grid-template-columns:2fr 1fr 1fr 80px 90px 36px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.th{font-size:12px;color:var(--mut);font-weight:500}
+@media(max-width:700px){.trow{grid-template-columns:1fr 1fr 1fr}.th{display:none}.trow>b{grid-column:1/-1}}
+.expg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.expg button{text-align:left;padding:16px;border-radius:14px;background:var(--soft)}.expg b{display:block;font:700 16px var(--fd)}.expg small{color:var(--mut);font-weight:400}
+.sw{position:relative;display:inline-block;width:46px;height:26px;flex:none}.sw input{opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;background:var(--line);border-radius:26px;transition:.2s;cursor:pointer}
+.sw i:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked+i{background:var(--pri)}.sw input:checked+i:before{transform:translateX(20px)}.opt{display:flex;justify-content:space-between;align-items:center;gap:14px}
+@media(max-width:900px){.app{grid-template-columns:1fr}
+.side{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:20;gap:0}
+.biz,.brand{display:none}.menu-n{flex-direction:row;justify-content:space-around}
+.menu-n button{flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;align-items:center;justify-content:center;text-align:center}.menu-n button.on{box-shadow:none;color:#35d0aa}
+.content{padding:14px 14px calc(88px + env(safe-area-inset-bottom,0px))}}
+
+.sub2{margin:2px 0 0;color:var(--mut);font-size:14px}
+.inf{display:inline-grid;place-items:center;width:15px;height:15px;margin-left:5px;border-radius:50%;background:var(--pri2);color:var(--pri);font:700 10px/1 var(--fd);cursor:help;position:relative;vertical-align:middle;user-select:none;font-style:normal}
+.inf:hover,.inf:focus{background:var(--pri);color:#fff;outline:0}
+.inf:after{content:attr(data-tip);position:absolute;left:-8px;bottom:calc(100% + 8px);width:240px;background:#1c2b33;color:#fff;padding:9px 11px;border-radius:10px;font:400 12px/1.45 var(--fb);text-align:left;white-space:normal;box-shadow:0 10px 26px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translateY(4px);transition:.15s;z-index:50}
+.inf:hover:after,.inf:focus:after{opacity:1;transform:none}
+.g2>div:nth-child(even) .inf:after,.ing>div:not(:nth-child(2)):not(:nth-child(6)):not(:first-child) .inf:after,.tier>div:nth-child(n+3) .inf:after{left:auto;right:-8px}
+.res .inf{background:rgba(255,255,255,.22);color:#fff}.res .inf:hover{background:#fff;color:var(--pri)}
+@media(max-width:600px){.inf:after{width:200px}}
+.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--sh)}
+.steps li:before{content:counter(s);width:36px;height:36px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font:800 16px var(--fd)}
+.steps b{display:block;font:700 16px var(--fd);margin-bottom:2px}.steps p{margin:0;color:var(--mut);font-size:14px}
+@media(max-width:700px){.steps li{grid-template-columns:36px 1fr}.steps li button{grid-column:2}}
+.gl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.gl>div{padding:14px;background:var(--soft);border-radius:12px;border:1px solid var(--line)}.gl p{margin:4px 0 0}
+.kpi{border-left:4px solid var(--pri)}
+.foot{margin-top:32px;padding:16px 0 4px;border-top:1px solid var(--line);text-align:center;color:var(--mut);font-size:13px}.foot b{color:var(--ink)}
+.calcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}.calcs .card{margin:0}
+.fm{background:var(--soft);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;margin-bottom:10px}
+.cc>div:not(.fm):not(.cr){margin-bottom:8px}
+.cr{display:flex;justify-content:space-between;align-items:center;background:var(--pri2);border-radius:10px;padding:10px 12px;margin-top:6px}.cr b{font:800 20px var(--fd);color:var(--pri)}
+.alert{background:#fff4e5;border:1px solid #f3c98b;border-radius:14px;padding:12px 14px;margin-bottom:16px;color:#5a3b00}.arow{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid #f3dcb5;font-size:14px;margin-top:8px}
+.mark svg{width:26px;height:26px;stroke-width:3;color:#fff}.brand .mark{width:38px;height:38px}
+.av svg{width:24px;height:24px;color:#fff;stroke-width:3}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>body.lock>*{visibility:hidden}#sync{visibility:visible!important}</style>
+</head>
+<body class="lock">
+<div class="app">
+<nav class="side">
+  <div class="biz"><div class="av" id="av"></div><div><b id="bizn">Meu Negócio</b><small>Precificação</small></div></div>
+  <div class="menu-n">
+    <button data-v="itens" class="on"><svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Produtos</span></button>
+    <button data-v="insumos"><svg viewBox="0 0 24 24"><path d="M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6"/></svg><span>Insumos</span></button>
+    <button data-v="config"><svg viewBox="0 0 24 24"><path d="M4 6h10M20 6h0M4 12h4M14 12h6M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Ajustes</span></button>
+    <button data-v="export"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg><span>Exportar</span></button>
+    <button data-v="tutorial"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1 1-1.1 1.7M12 17h0"/></svg><span>Tutorial</span></button>
+  </div>
+  <div class="brand"><div class="mark"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-label="Preço do Bom"><path d="M4 11h8l7 30h29"/><path d="M14 23h36l-3 18"/><rect x="19" y="8" width="13" height="15" rx="1.5"/><rect x="34" y="5" width="14" height="18" rx="1.5"/><path d="M22.5 13q3 3.5 6 0M37.5 10q3.5 3.5 7 0"/><circle cx="23" cy="51" r="3.6"/><circle cx="43" cy="51" r="3.6"/><g transform="translate(47 34) rotate(24)"><rect x="-8.5" y="-10.5" width="17" height="21" rx="2.5" fill="#fff" stroke="none"/><circle cx="0" cy="-6.5" r="1.5" fill="var(--pri)" stroke="none"/><text x="0" y="7" text-anchor="middle" font-size="13" font-weight="800" fill="var(--pri)" stroke="none" font-family="sans-serif">$</text></g></svg></div><div>Preço do <span>Bom</span></div></div>
+</nav>
+<div class="content">
+  <section class="view" id="v-itens">
+    <div class="ph"><div><h1>Produtos e pratos</h1><p class="sub2">Cadastre cada produto ou prato e descubra o preço ideal de venda.</p></div><button class="p" id="add">+ Novo item</button></div>
+    <div id="alerts"></div><div class="kpis" id="kpis"></div>
+    <div class="split"><div class="card"><h2>Seus itens</h2><div id="list"></div></div><div id="ed"></div></div>
+  </section>
+  <section class="view" id="v-insumos" hidden>
+    <div class="ph"><div><h1>Insumos</h1><p class="sub2">Sua lista de ingredientes e preços de compra, em um só lugar.</p></div></div>
+    <div class="card"><p class="tip" style="margin:0 0 12px">Altere um preço aqui e todos os itens que usam o insumo são recalculados.</p><div id="insl"></div></div>
+  </section>
+  <section class="view" id="v-config" hidden>
+    <div class="ph"><div><h1>Ajustes</h1><p class="sub2">Informe os percentuais do seu negócio. Eles valem para todos os itens.</p></div></div>
+    <div class="cols">
+    <div><div class="card"><h2>Seu negócio</h2><label>Nome do estabelecimento</label><input id="nome" placeholder="Ex.: Grano Café"><label style="margin-top:12px">Logo (aparece no cardápio e na ficha em PDF)</label><input type="file" id="logo" accept="image/*"><button class="x" id="logoX" style="padding:6px 0">Remover logo</button></div>
+    <div class="card"><div class="opt"><div><b>Arredondar para ,90</b><p class="tip" style="margin:2px 0 0">O preço sugerido já sai como R$ 23,90 em vez de R$ 23,41.</p></div><label class="sw"><input type="checkbox" id="a90"><i></i></label></div></div>
+    <div class="card"><h2>Dados e backups</h2><p class="tip" id="syncTxt" style="margin:0 0 10px">Os dados ficam na nuvem e neste navegador.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button id="bkNow">Fazer backup agora</button><button id="bkList">Ver backups</button><button id="chKey">Trocar chave</button></div><div id="bks"></div><div style="margin-top:12px"><button class="x" id="reset">Apagar todos os dados</button></div></div></div>
+    <div><div class="card">
+      <h2>Percentuais e custos</h2>
+      <div class="g2"><div><label>Lucro desejado % <span class="inf" tabindex="0" data-tip="Quanto você quer ganhar de lucro em cada venda, em % do preço. Ex.: 20% significa que de cada R$ 100 vendidos, R$ 20 são lucro.">i</span></label><input type="number" id="lucro" min="0" step="0.5"></div>
+        <div><label>Imposto % <span class="inf" tabindex="0" data-tip="Percentual de imposto sobre a venda (ex.: Simples Nacional ou MEI). Se não souber, pergunte ao seu contador.">i</span></label><input type="number" id="imp" min="0" step="0.25"></div>
+        <div><label>Taxa de cartão % <span class="inf" tabindex="0" data-tip="Taxa que a maquininha cobra em cada venda no cartao. Costuma ficar entre 1% e 5%.">i</span></label><input type="number" id="cartao" min="0" step="0.1"></div>
+        <div><label>Delivery/app % (opcional) <span class="inf" tabindex="0" data-tip="Comissão cobrada por apps como iFood. Deixe 0 se não vende por app. O site mostra um preço separado para esse canal.">i</span></label><input type="number" id="deliv" min="0" step="0.5"></div>
+        <div><label>Custos operacionais <span class="inf" tabindex="0" data-tip="Aluguel, luz, água, salários e outras despesas do dia a dia. Use % do preço de venda ou um valor fixo em R$ por unidade (botão ao lado).">i</span></label><div class="tgl"><input type="number" id="fixo" min="0" step="0.5"><select id="fm"><option>%</option><option>R$</option></select></div></div>
+        <div><label>Desconto sazonal <span class="inf" tabindex="0" data-tip="Promoção temporaria. O site mostra o preço com desconto e avisa se você ainda tem lucro.">i</span></label><div class="tgl"><input type="number" id="desc" min="0" step="0.5"><select id="dm"><option>%</option><option>R$</option></select></div></div></div>
+      <p class="tip">Custos operacionais: % do preço de venda (aluguel, luz, salários ÷ faturamento) ou valor fixo em R$ por unidade. O desconto sazonal mostra o preço promocional e se ainda sobra lucro.</p>
+    </div></div></div>
+  </section>
+  <section class="view" id="v-tutorial" hidden>
+    <div class="ph"><div><h1>Tutorial</h1><p class="sub2">Aprenda a precificar em 6 passos simples. Leva uns 5 minutos.</p></div><button class="p" data-go="itens">Começar agora</button></div>
+    <ol class="steps">
+      <li><div><b>Informe os percentuais do seu negócio</b><p>Em Ajustes, preencha lucro desejado, imposto, taxa de cartão e custos operacionais. Passe o mouse no <span class="inf" tabindex="0" data-tip="Este é o ícone de ajuda. Em todo o site, passe o mouse (ou toque) nele para ver uma explicação.">i</span> ao lado de cada campo para saber o que colocar.</p></div><button data-go="config">Ir para Ajustes</button></li>
+      <li><div><b>Crie um item</b><p>Em Produtos, clique em <b style="display:inline">+ Novo item</b> e dê um nome ao produto ou prato. Em Rendimento, diga quantas porções a receita inteira produz.</p></div><button data-go="itens">Ir para Produtos</button></li>
+      <li><div><b>Adicione os ingredientes</b><p>Para cada ingrediente, informe o preço pago, a quantidade comprada e a quantidade usada na receita. Pode comprar em kg e usar em g, a conversão é automática. Na segunda vez que usar o mesmo ingrediente, o preço já vem preenchido.</p></div></li>
+      <li><div><b>Inclua os outros custos</b><p>Embalagem, mão de obra e gás, água e energia da receita inteira. Não sabe quanto colocar? Use as calculadoras logo abaixo. Se tiver perda no preparo (casca, osso), preencha o campo Perda %.</p></div></li>
+      <li><div><b>Veja o preço ideal</b><p>O cartão verde mostra o preço sugerido, o lucro e a margem. Já cobra um preço? Digite em Quero cobrar: se os insumos subirem e a margem cair, o site avisa em Produtos e sugere o novo preço. Use os botões de arredondar para chegar a valores como R$ 23,90.</p></div></li>
+      <li><div><b>Exporte e use</b><p>Em Exportar, baixe a tabela em Excel, PDF, CSV, JSON ou texto, além da ficha técnica (uma página por item) e do cardápio em PDF com seu nome e logo. Para vender em quantidade, configure os níveis de desconto de lote no fim de cada item.</p></div><button data-go="export">Ir para Exportar</button></li>
+    </ol>
+    <div class="ph" style="margin:28px 0 12px"><div><h2 style="font-size:19px;margin:0">Como calcular gás, água, energia e mão de obra</h2><p class="sub2">Troque os números de exemplo pelos do seu negócio. O resultado aparece na hora; depois é só colocar no campo indicado do item.</p></div></div>
+    <div class="calcs" id="calcs"></div>
+    <div class="card" style="margin-top:16px"><h2>Como o site calcula o preço de venda</h2>
+      <p style="margin:0 0 8px"><b>Preço = custo por unidade ÷ (1 − soma dos percentuais)</b></p>
+      <p class="tip" style="margin:0">Exemplo: custo de R$ 10,00, com custos operacionais 15%, imposto 8%, cartão 2,9% e lucro 20%. A soma é 45,9%, então o preço é 10 ÷ 0,541 = <b>R$ 18,48</b>. Desse valor, R$ 3,70 (20%) é lucro. Por que não simplesmente custo × 1,459 (R$ 14,59)? Porque os percentuais incidem sobre o preço de venda, e não sobre o custo. Com R$ 14,59 você pagaria as taxas sobre um preço menor e o lucro de verdade ficaria abaixo dos 20%.</p></div>
+    <div class="card" style="margin-top:16px"><h2>Palavras que você vai ver</h2><div class="gl">
+      <div><b>Rendimento</b><p class="tip">Quantas porções a receita faz.</p></div>
+      <div><b>CMV</b><p class="tip">Parte do preço de venda que vai para pagar o custo dos ingredientes.</p></div>
+      <div><b>Margem de lucro</b><p class="tip">Quanto do preço de venda sobra como lucro, em %.</p></div>
+      <div><b>Custos operacionais</b><p class="tip">Aluguel, luz, salários e demais despesas fixas do negócio.</p></div>
+      <div><b>Markup</b><p class="tip">Multiplicador aplicado sobre o custo para chegar ao preço. Diferente da margem, que é calculada sobre o preço de venda.</p></div>
+      <div><b>Custo fixo e variável</b><p class="tip">Fixo não muda com as vendas (aluguel). Variável cresce com elas (ingredientes, embalagem).</p></div>
+      <div><b>Ficha técnica</b><p class="tip">A receita com quantidades e custos de cada ingrediente. Cada item do site é uma ficha técnica.</p></div>
+      <div><b>Perda (fator de correção)</b><p class="tip">O que se perde no preparo, como casca e osso. Você paga por 1 kg, mas aproveita menos.</p></div>
+      <div><b>Insumo</b><p class="tip">Qualquer ingrediente ou material que você compra para produzir.</p></div></div>
+      <p style="margin:16px 0 0"><button onclick="demo()">Ver um exemplo pronto (X-Burguer)</button></p></div>
+  </section>
+  <section class="view" id="v-export" hidden>
+    <div class="ph"><div><h1>Exportar</h1><p class="sub2">Baixe sua tabela de preços pronta para usar ou compartilhar.</p></div></div>
+    <div class="card"><p class="tip" style="margin:0 0 14px">Escolha o formato para baixar todos os seus itens precificados.</p><div class="expg" id="exp"></div></div>
+  </section>
+<footer class="foot">Made by <b>João Diego</b></footer>
+</div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const brl=n=>isFinite(n)?n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+const pc=n=>isFinite(n)?n.toLocaleString('pt-BR',{maximumFractionDigits:1})+'%':'—';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>parseFloat(String(v).replace(',','.'))||0;
+let S={cfg:{fixo:15,imp:8,lucro:20,deliv:0,cartao:2.9,desc:0,fm:'%',dm:'%'},lib:{},items:[],sel:null};
+try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+let K=localStorage.getItem('pdb_key')||'',tm,ver=0;
+const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
+const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
+const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
+function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
+function askKey(bad){const k=prompt(bad?'Chave inválida. Digite novamente:':'Digite sua chave de acesso:');if(k&&k.trim()){K=k.trim();localStorage.setItem('pdb_key',K);if(bad)location.reload();return true}return false}
+async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json','x-key':K}});if(r.status===429){setStat('Muitas tentativas erradas. Tente de novo em 15 min.');throw 401}if(r.status===401){K='';localStorage.removeItem('pdb_key');setStat('Acesso restrito: recarregue e informe a chave');askKey(true);throw 401}let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||r.status);return{s:r.status,j}}
+const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
+function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
+async function doPush(){if(!K)return;clearTimeout(tm);const v=ver;try{const r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
+  if(r.s===409){if(confirm('Outra pessoa salvou depois da sua última sincronização.\nOK = sobrescrever com as suas alterações\nCancelar = usar a versão da nuvem (as suas ficam em backup)')){S._base=r.j.updatedAt;return doPush()}
+    await bk('local');const c=(await api('state')).j;if(c)applyCloud(c);return}
+  S._base=r.j.updatedAt;if(v===ver)S._dirty=0;persist();setStat('Salvo na nuvem ✓')}catch(e){if(e!==401)setStat('Sem conexão com a nuvem – salvo só neste aparelho')}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&S._dirty)doPush()});
+const tip=t=>`<span class="inf" tabindex="0" data-tip="${t}">i</span>`;
+const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
+const newIng=()=>({n:'',preco:0,qtd:1,un:'g',uso:0,uun:'g',perda:0});
+const FAM={g:'m',kg:'m',ml:'v',L:'v',un:'u'},FAC={g:1,kg:1000,ml:1,L:1000,un:1},UN=['g','kg','ml','L','un'];
+const eff=g=>{const l=g.n&&S.lib[g.n.trim().toLowerCase()];return l?{...g,preco:l.preco,qtd:l.qtd,un:l.un}:g};
+function rcost(g){const e=eff(g),u=g.uun||e.un;if(FAM[u]!==FAM[e.un])return NaN;const q=num(e.qtd)*FAC[e.un];if(q<=0)return 0;return num(e.preco)/q*num(g.uso)*FAC[u]/(1-Math.min(num(g.perda),95)/100)}
+const opts=v=>UN.map(u=>`<option ${u===v?'selected':''}>${u}</option>`).join('');
+function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
+ <div><label>Ingrediente ${tip('Digite o nome. Se você já usou esse ingrediente antes, o preço é preenchido sozinho.')}</label><input list="dl" data-g="n" value="${esc(g.n)}" placeholder="Digite ou escolha da lista"></div>
+ <div><label>Preço pago R$ ${tip('Quanto você pagou na compra completa. Ex.: R$ 38 por 1 kg de carne.')}</label><input type="number" min="0" step="0.01" data-g="preco" value="${e.preco}"></div>
+ <div><label>Qtd. comprada ${tip('A quantidade que veio nessa compra. Ex.: 1 (com a unidade kg).')}</label><input type="number" min="0" step="any" data-g="qtd" value="${e.qtd}"></div>
+ <div><label>Unid.</label><select data-g="un">${opts(e.un)}</select></div>
+ <div><label>Qtd. usada ${tip('Quanto você usa na receita. Pode ser outra unidade: comprou em kg e usa em g.')}</label><input type="number" min="0" step="any" data-g="uso" value="${g.uso}"></div>
+ <div><label>Unid.</label><select data-g="uun">${opts(g.uun||e.un)}</select></div>
+ <div><label>Perda % ${tip('O que se perde no preparo (casca, osso, aparas). Ex.: 10% de perda.')}</label><input type="number" min="0" max="95" data-g="perda" value="${g.perda||0}"></div>
+ <div><label>Custo ${tip('Quanto esse ingrediente custa na receita, já considerando a perda.')}</label><div class="rc" style="padding:8px 0;font-weight:600"></div></div>
+ <button class="x" data-del="${k}" title="Remover">✕</button></div>`}
+function calc(it){
+  const ing=it.ings.reduce((a,i)=>{const c=rcost(i);return a+(isFinite(c)?c:0)},0);
+  const total=ing+num(it.emb)+num(it.mo)+num(it.gas), un=total/(num(it.rend)||1)+(S.cfg.fm==='R$'?num(S.cfg.fixo):0);
+  const {fixo,imp,lucro,cartao}=S.cfg,fp=S.cfg.fm==='R$'?0:num(fixo),tx=fp+num(imp)+num(cartao),perc=tx+num(lucro);
+  const sug=perc<100?un/(1-perc/100):NaN,dv=perc+num(S.cfg.deliv),sugD=dv<100?un/(1-dv/100):NaN;
+  const ad=num(it.final)>0?num(it.final):(S.cfg.a90&&isFinite(sug)?r90(sug):sug);
+  const luc=ad-un-ad*tx/100,pd=ad-(S.cfg.dm==='R$'?num(S.cfg.desc):ad*num(S.cfg.desc)/100),lucD=pd-un-pd*tx/100;
+  return {tx,pd,lucD,ing,total,un,perc,sug,sugD,ad,luc,mg:ad>0?luc/ad*100:NaN,cmv:ad>0?un/ad*100:NaN};
+}
+const cur=()=>S.items.find(i=>i.id===S.sel);
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2600)}
+function tiersHtml(it){if(!it.tiers)it.tiers=[{q:10,d:5},{q:50,d:10},{q:100,d:15}];
+return `<div class="card" style="margin-top:14px"><h2>Preços para venda em lote</h2>${it.tiers.map((t,i)=>`<div class="tier" data-ti="${i}"><div><label>Quantidade ${tip('A partir de quantas unidades o desconto vale.')}</label><input type="number" min="1" data-t="q" value="${t.q}"></div><div><label>Desconto % ${tip('Percentual de desconto dado nessa quantidade.')}</label><input type="number" min="0" max="99" step="0.5" data-t="d" value="${t.d}"></div><div><label>Preço un.</label><b class="tp"></b></div><div><label>Lucro un.</label><b class="tl"></b></div><div><label>Total</label><b class="tt"></b></div><button class="x" data-tdel="${i}">✕</button></div>`).join('')}<button data-act="addtier">+ Adicionar nível</button></div>`}
+function renderAlerts(){const A=S.items.map(it=>({it,c:calc(it)})).filter(({it,c})=>num(it.final)>0&&isFinite(c.sug)&&c.mg<num(S.cfg.lucro)-0.05);
+$('#alerts').innerHTML=A.length?`<div class="alert"><b>⚠ ${A.length>1?A.length+' itens estão abaixo':'1 item está abaixo'} da margem desejada</b>`+A.slice(0,6).map(({it,c})=>`<div class="arow"><span><b>${esc(it.nome)||'Sem nome'}</b>: hoje ${brl(c.ad)} (margem ${pc(c.mg)}). Preço ideal: <b>${brl(c.sug)}</b> (${c.sug>c.ad?'+':''}${brl(c.sug-c.ad)})</span><button data-fix="${it.id}">Aplicar preço ideal</button></div>`).join('')+'</div>':''}
+function kpis(){const a=S.items.map(i=>calc(i)).filter(c=>isFinite(c.ad)&&c.ad>0),av=f=>a.length?a.reduce((x,c)=>x+f(c),0)/a.length:NaN;
+$('#kpis').innerHTML=[['Itens cadastrados',S.items.length],['Preço médio',brl(av(c=>c.ad))],['Margem média',pc(av(c=>c.mg))],['Insumos salvos',Object.keys(S.lib).length]].map(([l,v])=>`<div class="kpi"><span>${l}</span><b>${v}</b></div>`).join('')}
+function renderList(){kpis();renderAlerts();
+  $('#list').innerHTML=S.items.length?S.items.map(it=>`<div class="item ${it.id===S.sel?'on':''}" data-id="${it.id}"><div><b>${esc(it.nome)||'Sem nome'}</b><small>${esc(it.cat)||'Sem categoria'}</small></div><div class="pr">${(c=>brl(c.ad)+'<em class="'+(c.mg<num(S.cfg.lucro)?'low':'ok')+'">'+pc(c.mg)+' de margem</em>')(calc(it))}</div></div>`).join(''):'<p class="tip">Nenhum item ainda.</p>';
+}
+function renderEd(){
+  const it=cur();
+  if(!it){$('#ed').innerHTML='<div class="card empty"><h2>Bem-vindo ao Preço do Bom 👋</h2><p>Ajuste os percentuais do seu negócio ao lado, cadastre um produto ou prato com seus ingredientes e veja o preço certo na hora.</p><button class="p" onclick="add.click()">+ Criar meu primeiro item</button> <button onclick="demo()">Ver um exemplo pronto</button> <button onclick="show(&quot;tutorial&quot;)">Como usar</button></div>';return}
+  $('#ed').innerHTML=`
+  <div class="card"><h2>Dados do item</h2>
+    <div class="g2"><div><label>Nome do produto/prato</label><input data-f="nome" value="${esc(it.nome)}" placeholder="Ex.: X-Burguer"></div>
+    <div><label>Categoria ${tip('Para agrupar seus itens (Lanches, Bebidas, Sobremesas...). Opcional.')}</label><input data-f="cat" value="${esc(it.cat)}" placeholder="Ex.: Lanches"></div></div>
+    <div class="g2" style="margin-top:10px"><div><label>Rendimento (quantas porções/unidades a receita faz) ${tip('Quantas unidades ou porções a receita inteira produz. Ex.: uma receita que rende 10 fatias = 10.')}</label><input type="number" min="1" data-f="rend" value="${it.rend}"></div>
+    <div><label>Embalagem/outros custos da receita (R$) ${tip('Custo de embalagem, sacolas, etiquetas e outros itens usados na receita inteira.')}</label><input type="number" min="0" step="0.01" data-f="emb" value="${it.emb}"></div></div>
+    <div class="g2" style="margin-top:10px"><div><label>Mão de obra da receita (R$) ${tip('Quanto custa o tempo de quem prepara a receita inteira, em reais. Veja no Tutorial como calcular.')}</label><input type="number" min="0" step="0.01" data-f="mo" value="${it.mo||0}"></div><div><label>Gás, água e energia da receita (R$) ${tip('Gás, água e energia gastos na receita inteira. Veja no Tutorial como calcular.')}</label><input type="number" min="0" step="0.01" data-f="gas" value="${it.gas||0}"></div></div></div>
+  <div class="card"><h2>Ingredientes / insumos</h2>
+    <datalist id="dl">${Object.values(S.lib).map(l=>`<option value="${esc(l.n)}">`).join('')}</datalist>${it.ings.map(rowHtml).join('')}
+    <button id="addIng">+ Adicionar ingrediente</button>
+    <p class="tip">⚡ Automático: ingrediente já usado antes preenche o preço sozinho, e ao mudar o preço ele atualiza em todos os itens. Compre em kg e use em g — a conversão é feita sozinha. <b>Perda %</b> = casca, osso, aparas.</p></div>
+  <div class="res"><h2>Resultado</h2>
+    <div class="sub">Preço de venda sugerido (por unidade)</div>
+    <div class="big" id="r-sug"></div>
+    <div style="margin:12px 0"><div class="row"><span>Custo dos ingredientes</span><b id="r-ing"></b></div>
+    <div class="row"><span>Custo por unidade ${tip('Custo total da receita dividido pelo rendimento.')}</span><b id="r-un"></b></div>
+    <div class="row"><span>CMV (custo ÷ preço) ${tip('Custo da Mercadoria Vendida: quanto do preço vai para pagar o custo. Quanto menor, melhor.')}</span><b id="r-cmv"></b></div>
+    <div class="row"><span>Lucro por unidade ${tip('O que sobra para você em cada venda, depois de custo, despesas, impostos e taxas.')}</span><b id="r-luc"></b></div>
+    <div class="row"><span>Margem real de lucro ${tip('Lucro dividido pelo preço de venda, em %.')}</span><b id="r-mg"></b></div><div class="row" id="r-dvrow"><span>Preço no delivery/app ${tip('Preço sugerido para vender em apps, já considerando a comissão.')}</span><b id="r-dv"></b></div><div class="row" id="r-pdrow"><span>Preço com desconto sazonal</span><b id="r-pd"></b></div><div class="row" id="r-ldrow"><span>Lucro com desconto</span><b id="r-ld"></b></div></div>
+    <label>Quero cobrar (R$) — opcional, para simular seu preço ${tip('Digite o preço que você pratica hoje. O site avisa na tela Produtos quando os custos subirem e esse preço deixar de dar a margem desejada.')}</label>
+    <input type="number" min="0" step="0.01" data-f="final" value="${it.final||''}" placeholder="Deixe vazio para usar o sugerido">
+    <div class="ex" style="margin-top:8px"><button data-act="r90">Arredondar p/ ,90</button><button data-act="rint">Arredondar p/ inteiro</button><button data-act="rsug">Usar sugerido</button></div><div id="r-msg" class="tip"></div></div>
+  ${tiersHtml(it)}<div style="margin-top:12px" class="ex"><button id="dup">Duplicar item</button><button class="x" id="delItem">Excluir este item</button></div>`;
+  refresh();
+}
+function refresh(){
+  const it=cur();if(!it)return;const c=calc(it);
+  const set=(i,v)=>{const e=$('#'+i);if(e)e.textContent=v};
+  set('r-sug',brl(c.sug));set('r-ing',brl(c.ing));set('r-un',brl(c.un));set('r-cmv',pc(c.cmv));set('r-luc',brl(c.luc));set('r-mg',pc(c.mg));set('r-dv',brl(c.sugD));
+  const dsc=num(S.cfg.desc)>0;['r-pdrow','r-ldrow'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=dsc?'flex':'none'});
+  set('r-pd',brl(c.pd));set('r-ld',brl(c.lucD)+' ('+pc(c.pd>0?c.lucD/c.pd*100:NaN)+')');const ld=$('#r-ld');if(ld)ld.className=c.lucD<0?'warn':'';
+  document.querySelectorAll('.tier').forEach(r=>{const t=it.tiers[+r.dataset.ti],q=num(t.q),pp=c.ad*(1-num(t.d)/100),l=pp-c.un-pp*c.tx/100,e=r.querySelector('.tl');r.querySelector('.tp').textContent=brl(pp);e.textContent=brl(l);e.className='tl'+(l<0?' warn':'');r.querySelector('.tt').textContent=brl(pp*q)});const dr=$('#r-dvrow');if(dr)dr.style.display=num(S.cfg.deliv)>0?'flex':'none';
+  document.querySelectorAll('.ing').forEach(r=>{const el=r.querySelector('.rc'),v=rcost(it.ings[+r.dataset.k]);el.innerHTML=isFinite(v)?brl(v):'<span class="warn" title="Unidades incompatíveis">⚠ unid.</span>'});
+  const m=$('#r-msg');
+  if(c.perc>=100){m.innerHTML='<span class="warn">Despesas + taxas + lucro somam 100% ou mais: não há preço possível. Reduza algum percentual.</span>'}
+  else if(num(it.final)>0&&c.luc<0){m.innerHTML='<span class="warn">Com esse preço você tem prejuízo de '+brl(-c.luc)+' por unidade.</span>'}
+  else if(num(it.final)>0&&c.mg<num(S.cfg.lucro)){m.innerHTML='Esse preço dá margem menor que os '+pc(num(S.cfg.lucro))+' desejados. Sugerido: <b>'+brl(c.sug)+'</b>.'}
+  else m.textContent='Preço ideal para cobrir custos, despesas, taxas e ainda lucrar '+pc(num(S.cfg.lucro))+'.';
+  renderList();save();
+}
+function rows(){return S.items.map(it=>{const c=calc(it);return{Item:it.nome,Categoria:it.cat,Rendimento:num(it.rend),'Custo/un (R$)':+c.un.toFixed(2),'Preço sugerido (R$)':+(c.sug||0).toFixed(2),'Preço delivery (R$)':+(c.sugD||0).toFixed(2),'Preço adotado (R$)':+(c.ad||0).toFixed(2),'Preço c/ desc. sazonal (R$)':+(c.pd||0).toFixed(2),'Lucro/un (R$)':+(c.luc||0).toFixed(2),'Margem (%)':+(c.mg||0).toFixed(1),'CMV (%)':+(c.cmv||0).toFixed(1)}})}
+async function out(name,data){
+  const d=await claude.use('downloads');
+  if(!d){toast('Download indisponível nesta visualização');return}
+  try{await d.save({filename:name,data});toast('Arquivo pronto: '+name)}catch(e){if(e.code!=='declined')toast('Não foi possível salvar ('+(e.code||'erro')+')')}
+}
+const stamp=()=>'preco-do-bom';
+const bl=n=>'R$ '+(isFinite(n)?n:0).toFixed(2).replace('.',',');
+function hdr(doc,sub){let x=14;if(S.cfg.logo){try{const q=doc.getImageProperties(S.cfg.logo),k=18/Math.max(q.width,q.height);doc.addImage(S.cfg.logo,'PNG',14,10,q.width*k,q.height*k);x=14+q.width*k+4}catch(e){}}
+doc.setFontSize(16);doc.setTextColor(20);doc.text(S.cfg.nome||'Meu Negócio',x,18);doc.setFontSize(9);doc.setTextColor(110);doc.text(sub+' - '+new Date().toLocaleDateString('pt-BR'),x,25);doc.setDrawColor(15,157,122);doc.line(14,32,196,32);doc.setTextColor(20)}
+const EXP={
+ 'Excel':()=>{const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows()),'Preços');
+  const ing=[];S.items.forEach(it=>it.ings.forEach(g=>{const e=eff(g);ing.push({Item:it.nome,Ingrediente:g.n,'Preço pago':num(e.preco),'Qtd comprada':num(e.qtd),Unid:e.un,'Qtd usada':num(g.uso),'Unid. uso':g.uun||e.un,'Perda %':num(g.perda),'Custo (R$)':+(rcost(g)||0).toFixed(2)})}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(ing),'Ingredientes');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(Object.values(S.lib).map(l=>({Insumo:l.n,'Preço (R$)':num(l.preco),Quantidade:num(l.qtd),Unid:l.un}))),'Insumos');const lote=[];S.items.forEach(it=>{const c=calc(it);(it.tiers||[]).forEach(t=>{const pp=(c.ad||0)*(1-num(t.d)/100);lote.push({Item:it.nome,Quantidade:num(t.q),'Desconto %':num(t.d),'Preço un. (R$)':+pp.toFixed(2),'Total (R$)':+(pp*num(t.q)).toFixed(2)})})});XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(lote),'Lote');
+  return ['.xlsx',XLSX.write(wb,{bookType:'xlsx',type:'array'})]},
+ 'PDF':()=>{const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'landscape'});
+  doc.setFontSize(18);doc.text('Preço do Bom — Tabela de preços',14,16);doc.setFontSize(10);doc.text(new Date().toLocaleDateString('pt-BR'),14,22);
+  const r=rows();doc.autoTable({startY:27,head:[Object.keys(r[0])],body:r.map(o=>Object.values(o)),styles:{fontSize:8},headStyles:{fillColor:[31,122,77]}});
+  return ['.pdf',doc.output('arraybuffer')]},
+ 'Ficha técnica':()=>{const {jsPDF}=window.jspdf,doc=new jsPDF();S.items.forEach((it,i)=>{if(i)doc.addPage();const c=calc(it);hdr(doc,'Ficha técnica');doc.setFontSize(15);doc.text(it.nome||'Sem nome',14,43);doc.setFontSize(10);doc.text('Categoria: '+(it.cat||'-')+'  |  Rendimento: '+num(it.rend)+' porção(ões)',14,50);
+  doc.autoTable({startY:55,head:[['Ingrediente','Qtd. usada','Perda','Custo']],body:it.ings.filter(g=>g.n).map(g=>[g.n,num(g.uso)+' '+(g.uun||eff(g).un),num(g.perda)+'%',bl(rcost(g))]),styles:{fontSize:9},headStyles:{fillColor:[15,157,122]}});
+  doc.autoTable({startY:doc.lastAutoTable.finalY+8,body:[['Ingredientes',bl(c.ing)],['Embalagem',bl(num(it.emb))],['Mão de obra',bl(num(it.mo))],['Gás, água e energia',bl(num(it.gas))],['Custo total da receita',bl(c.total)],['Custo por unidade',bl(c.un)],['Preço de venda',bl(c.ad)],['Lucro por unidade',bl(c.luc)],['Margem real',pc(c.mg)]],theme:'plain',styles:{fontSize:10},columnStyles:{1:{halign:'right',fontStyle:'bold'}}})});
+  return ['.pdf',doc.output('arraybuffer'),'ficha-tecnica']},
+ 'Cardápio':()=>{const {jsPDF}=window.jspdf,doc=new jsPDF();hdr(doc,'Cardápio');let y=40;const G={};S.items.forEach(it=>{const k=(it.cat||'').trim()||'Outros';(G[k]=G[k]||[]).push(it)});
+  Object.keys(G).sort().forEach(k=>{doc.autoTable({startY:y,head:[[k,'']],body:G[k].map(it=>[it.nome||'Sem nome',bl(calc(it).ad)]),styles:{fontSize:11},headStyles:{fillColor:[15,157,122]},columnStyles:{1:{halign:'right',cellWidth:35}}});y=doc.lastAutoTable.finalY+8});
+  return ['.pdf',doc.output('arraybuffer'),'cardapio']},
+ 'CSV':()=>{const r=rows(),h=Object.keys(r[0]);return ['.csv','\ufeff'+[h,...r.map(o=>Object.values(o))].map(l=>l.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n')]},
+ 'JSON':()=>['.json',JSON.stringify({configuracao:S.cfg,itens:S.items.map(it=>({...it,calculo:calc(it)}))},null,2)],
+ 'Texto':()=>['.txt','PREÇO DO BOM\n\n'+rows().map(o=>`${o.Item} (${o.Categoria||'-'}): R$ ${o['Preço adotado (R$)'].toFixed(2).replace('.',',')}`).join('\n')]
+};
+$('#exp').innerHTML=Object.keys(EXP).map(k=>`<button data-ex="${k}"><b>${k}</b><small>${({Excel:"Planilha · .xlsx",PDF:"Documento · .pdf",CSV:"Tabela · .csv",JSON:"Dados · .json",Texto:"Lista simples · .txt","Ficha técnica":"PDF · uma página por item",Cardápio:"PDF · com nome e logo"})[k]}</small></button>`).join('');
+$('#exp').onclick=e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k=b.dataset.ex;$('#exp').classList.remove('open');
+  if(!S.items.length){toast('Cadastre ao menos um item para exportar');return}
+  try{const [ext,data,nm]=EXP[k]();out((nm||stamp())+ext,data)}catch(err){toast('Erro ao gerar '+k+'. Tente novamente.')}};
+['fixo','imp','lucro','deliv','cartao','desc'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]??0;e.oninput=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
+['fm','dm'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]||'%';e.onchange=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
+$('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',rend:1,emb:0,mo:0,gas:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
+$('#list').onclick=e=>{const d=e.target.closest('[data-id]');if(d){S.sel=d.dataset.id;renderList();renderEd();$('#ed').scrollIntoView({behavior:'smooth'})}};
+$('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
+  if(t.dataset.f)it[t.dataset.f]=t.value;
+  else if(t.dataset.t)it.tiers[+t.closest('[data-ti]').dataset.ti][t.dataset.t]=t.value;
+  else if(t.dataset.g){const g=it.ings[+t.closest('[data-k]').dataset.k],f=t.dataset.g;
+    if(['preco','qtd','un'].includes(f)&&g.n.trim()){const b={...eff(g),[f]:t.value};S.lib[g.n.trim().toLowerCase()]={n:g.n.trim(),preco:b.preco,qtd:b.qtd,un:b.un}}else g[f]=t.value}
+  refresh()});
+$('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||t.dataset.g!=='n')return;
+  const k=+t.closest('[data-k]').dataset.k,g=it.ings[k],key=g.n.trim().toLowerCase();
+  if(key){if(!S.lib[key]&&num(g.preco)>0)S.lib[key]={n:g.n.trim(),preco:g.preco,qtd:g.qtd,un:g.un};
+    const l=S.lib[key];if(l&&!g.uso)g.uun=l.un==='kg'?'g':l.un==='L'?'ml':l.un;
+    if(k===it.ings.length-1)it.ings.push(newIng())}
+  renderEd();save()});
+$('#ed').addEventListener('click',e=>{const it=cur(),t=e.target;if(!it)return;
+  if(t.id==='addIng'){it.ings.push(newIng());renderEd()}
+  else if(t.dataset.del!==undefined){it.ings.splice(+t.dataset.del,1);if(!it.ings.length)it.ings.push(newIng());renderEd()}
+  else if(t.dataset.act==='addtier'){const l=it.tiers[it.tiers.length-1]||{q:25,d:0};it.tiers.push({q:num(l.q)*2,d:num(l.d)+5});renderEd()}
+  else if(t.dataset.tdel!==undefined){it.tiers.splice(+t.dataset.tdel,1);renderEd()}
+  else if(t.dataset.act){const c=calc(it);if(t.dataset.act==='rsug')it.final='';else if(isFinite(c.sug)){let r=t.dataset.act==='r90'?Math.ceil(c.sug)-0.1:Math.ceil(c.sug);if(r<c.sug)r+=1;it.final=r.toFixed(2)}renderEd()}
+  else if(t.id==='dup'){const n=JSON.parse(JSON.stringify(it));n.id='i'+Date.now();n.nome=(it.nome||'Item')+' (cópia)';S.items.push(n);S.sel=n.id;renderList();renderEd();save()}
+  else if(t.id==='delItem'&&confirm('Excluir este item?')){S.items=S.items.filter(i=>i!==it);S.sel=S.items[0]?.id||null;renderList();renderEd();save()}});
+function show(v){document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);document.querySelectorAll('.side [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(v==='insumos')renderIns();if(v==='itens'){renderList();renderEd()}scrollTo(0,0)}
+document.querySelectorAll('.side [data-v]').forEach(b=>b.onclick=()=>show(b.dataset.v));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+const CALCS=[
+{to:'gas',bt:'Somar ao item',t:'Gás',d:'Se você cozinha no fogão a gás, o custo vem do botijão. Descubra quantas horas de fogão aceso ele dura (anote a data da troca e estime as horas por dia).',f:'Preço do botijão ÷ horas que dura × horas de fogão na receita',u:'Some o resultado ao campo Gás, água e energia do item.',in:[['Preço do botijão (R$)',110],['Duração do botijão (horas de fogão aceso)',40],['Tempo de fogão na receita (minutos)',30]],fn:(a,b,c)=>b>0?a/b*c/60:NaN},
+{to:'gas',bt:'Somar ao item',t:'Energia elétrica',d:'Para forno elétrico, batedeira, fritadeira e outros aparelhos. A potência (watts) fica na etiqueta do aparelho e o preço do kWh está na sua conta de luz.',f:'Potência em kW × horas ligado × preço do kWh',u:'Some ao campo Gás, água e energia do item.',in:[['Potência do aparelho (watts)',1500],['Tempo ligado na receita (minutos)',40],['Preço do kWh (R$)',0.95]],fn:(w,m,t)=>w/1000*m/60*t},
+{to:'gas',bt:'Somar ao item',t:'Água',d:'Água usada para lavar, cozinhar e limpar durante a receita. O preço do m³ (1.000 litros) está na conta de água, somando o esgoto.',f:'Litros usados ÷ 1.000 × preço do m³',u:'Some ao campo Gás, água e energia do item.',in:[['Litros usados na receita',30],['Preço do m³ de água + esgoto (R$)',12]],fn:(l,p)=>l/1000*p},
+{to:'mo',bt:'Usar no item',t:'Mão de obra',d:'O custo do tempo de quem produz. Se for funcionário, inclua os encargos (13º, férias, FGTS, INSS). Se for você, use quanto quer ganhar por mês (pró-labore).',f:'Salário com encargos ÷ horas trabalhadas no mês ÷ 60 × minutos na receita',u:'Coloque no campo Mão de obra do item. Se a receita rende várias unidades, o site divide pelo rendimento.',in:[['Salário ou retirada mensal (R$)',2200],['Encargos (%) — use 0 se for você',70],['Horas trabalhadas no mês',176],['Minutos gastos na receita',60]],fn:(s,e,h,m)=>h>0?s*(1+e/100)/h*m/60:NaN},
+{to:'cfg',bt:'Usar em Ajustes',t:'Custos operacionais (%)',d:'Some as despesas fixas do mês (aluguel, luz, água, internet, contador, salários da equipe de apoio...) e divida pelo faturamento médio mensal.',f:'Custos fixos do mês ÷ faturamento do mês × 100',u:'Use em Ajustes, campo Custos operacionais (em %). Se já contou salários aqui, não repita na Mão de obra do item.',pct:1,in:[['Custos fixos totais do mês (R$)',6000],['Faturamento médio mensal (R$)',40000]],fn:(c,f)=>f>0?c/f*100:NaN}];
+function cc1(card){const c=CALCS[+card.dataset.c],r=c.fn(...[...card.querySelectorAll('input')].map(i=>num(i.value)));card.querySelector('.cr b').textContent=c.pct?pc(r):brl(r);card.dataset.r=r}
+function renderCalcs(){$('#calcs').innerHTML=CALCS.map((c,i)=>`<div class="card cc" data-c="${i}"><h2>${c.t}</h2><p class="tip" style="margin:0 0 10px">${c.d}</p><div class="fm">${c.f}</div>${c.in.map(([l,v])=>`<div><label>${l}</label><input type="number" min="0" step="any" value="${v}"></div>`).join('')}<div class="cr"><span>Resultado</span><b></b></div><button class="p" data-use style="width:100%;margin-top:10px">${c.bt}</button><p class="tip">${c.u}</p></div>`).join('');document.querySelectorAll('.cc').forEach(cc1)}
+$('#calcs').addEventListener('input',e=>{const k=e.target.closest('.cc');if(k)cc1(k)});
+renderCalcs();
+$('#calcs').addEventListener('click',e=>{const b=e.target.closest('[data-use]');if(!b)return;const k=b.closest('.cc'),c=CALCS[+k.dataset.c],r=+k.dataset.r;if(!isFinite(r))return toast('Preencha os campos para calcular');
+ if(c.to==='cfg'){S.cfg.fixo=+r.toFixed(2);S.cfg.fm='%';$('#fixo').value=S.cfg.fixo;$('#fm').value='%';save();renderList();return toast('Custos operacionais em Ajustes: '+pc(r))}
+ const it=cur();if(!it)return toast('Abra ou crie um item em Produtos primeiro');
+ if(c.to==='gas')it.gas=+(num(it.gas)+r).toFixed(2);else it.mo=+r.toFixed(2);
+ save();renderList();toast((c.to==='gas'?'Somado a Gás, água e energia de ':'Mão de obra aplicada em ')+(it.nome||'item')+': '+brl(r))});
+$('#alerts').addEventListener('click',e=>{const id=e.target.dataset.fix;if(!id)return;const it=S.items.find(i=>i.id===id),c=calc(it);it.final=(S.cfg.a90?r90(c.sug):c.sug).toFixed(2);if(S.sel===id)renderEd();else renderList();save();toast('Preço atualizado: '+brl(num(it.final)))});
+$('#logo').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.cfg.logo=c.toDataURL('image/png');biz();save();toast('Logo salvo')};im.src=r.result};r.readAsDataURL(f)};
+$('#logoX').onclick=()=>{delete S.cfg.logo;biz();save()};
+function demo(){const L=(n,preco,qtd,un)=>{S.lib[n.toLowerCase()]={n,preco,qtd,un}};L('Pão de hambúrguer',9,6,'un');L('Carne moída',38,1,'kg');L('Queijo mussarela',42,1,'kg');L('Alface',3,1,'un');
+const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
+const it={id:'i'+Date.now(),nome:'X-Burguer',cat:'Lanches',rend:1,emb:1.2,mo:2,gas:0.6,final:'',ings:[g('Pão de hambúrguer',1,'un'),g('Carne moída',150,'g',10),g('Queijo mussarela',40,'g'),g('Alface',0.1,'un')]};
+S.items.push(it);S.sel=it.id;show('itens');renderList();renderEd();save()}
+function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
+$('#nome').value=S.cfg.nome||'';$('#nome').oninput=e=>{S.cfg.nome=e.target.value;biz();save()};biz();
+$('#a90').checked=!!S.cfg.a90;$('#a90').onchange=e=>{S.cfg.a90=e.target.checked;refresh();renderList();save()};
+$('#reset').onclick=async()=>{if(!confirm('Apagar todos os itens, insumos e ajustes?\nUm backup é salvo na nuvem antes.'))return;try{await bk('antes-apagar')}catch(e){if(!confirm('Não consegui salvar o backup na nuvem. Apagar mesmo assim?'))return}try{localStorage.setItem('pdb',JSON.stringify({_base:S._base||0,_dirty:1}))}catch(e){}location.reload()};
+async function listBk(){try{const r=await api('backup');$('#bks').innerHTML=r.j.length?r.j.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #0001"><span>${esc(new Date(b.at).toLocaleString('pt-BR'))} · <small>${esc(b.name.replace(/\.json$/,'').split('_').slice(1).join(' · '))}</small></span><button data-rs="${esc(b.name)}">Restaurar</button></div>`).join(''):'<p class="tip">Nenhum backup ainda.</p>'}catch(e){toast('Não consegui listar os backups')}}
+$('#bkList').onclick=listBk;
+$('#bkNow').onclick=async()=>{try{await bk('manual');toast('Backup salvo na nuvem');listBk()}catch(e){toast('Falha ao salvar o backup')}};
+$('#chKey').onclick=()=>{localStorage.removeItem('pdb_key');K='';location.reload()};
+$('#bks').onclick=async e=>{const n=e.target.dataset.rs;if(!n||!confirm('Restaurar '+n+'?\nO estado atual vira um backup antes.'))return;try{const r=await api('backup?name='+encodeURIComponent(n));await bk('antes-restaurar');localStorage.setItem('pdb',JSON.stringify({...r.j,_base:S._base||0,_dirty:1}));location.reload()}catch(e){toast('Falha ao restaurar')}};
+function renderIns(){const L=Object.entries(S.lib);$('#insl').innerHTML=L.length?'<div class="trow th"><span>Insumo</span><span>Preço R$</span><span>Qtd.</span><span>Unid.</span><span>Usado em</span><span></span></div>'+L.map(([k,l])=>`<div class="trow" data-k="${esc(k)}"><b>${esc(l.n)}</b><input type="number" min="0" step="0.01" data-i="preco" value="${l.preco}"><input type="number" min="0" step="any" data-i="qtd" value="${l.qtd}"><select data-i="un">${opts(l.un)}</select><span>${S.items.filter(it=>it.ings.some(g=>g.n.trim().toLowerCase()===k)).length} itens</span><button class="x" data-idel="${esc(k)}">✕</button></div>`).join(''):'<p class="tip">Os insumos aparecem aqui automaticamente quando você os usa em um item.</p>'}
+$('#insl').addEventListener('input',e=>{const t=e.target,r=t.closest('[data-k]');if(r&&t.dataset.i){S.lib[r.dataset.k][t.dataset.i]=t.value;renderList();save()}});
+$('#insl').addEventListener('click',e=>{const k=e.target.dataset.idel;if(k!==undefined&&confirm('Remover este insumo da biblioteca?')){delete S.lib[k];renderIns();renderList();save()}});
+if(!S.items.find(i=>i.id===S.sel))S.sel=S.items[0]?.id||null;
+renderList();renderEd();
+(async()=>{
+ const ok=()=>document.body.classList.remove('lock');
+ if(!K&&!askKey()){setStat('Acesso restrito: recarregue e informe a chave');return}
+ if(S._base===undefined&&S.items.length)S._dirty=1;
+ try{
+  const c=(await api('state')).j;ok();
+  if(!c){S._dirty=1;await doPush()}
+  else if(c.updatedAt===S._base){if(S._dirty)await doPush();else setStat('Sincronizado ✓')}
+  else if(!S._dirty){applyCloud(c);return}
+  else if(confirm('Este aparelho tem alterações que ainda não estão na nuvem, e a nuvem já tem uma versão.\nOK = manter os dados deste aparelho (sobrescreve a nuvem)\nCancelar = usar a nuvem (os deste aparelho vão para backup)')){S._base=c.updatedAt;await doPush()}
+  else{await bk('local');applyCloud(c);return}
+  const d=new Date().toISOString().slice(0,10);
+  if(localStorage.getItem('pdb_bk')!==d&&S.items.length){await bk('auto');localStorage.setItem('pdb_bk',d)}
+ }catch(e){if(e!==401){ok();setStat('Sem conexão com a nuvem – usando os dados deste aparelho')}}
+})();
+</script>
+</body>
+</html>
