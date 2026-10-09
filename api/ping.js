@@ -9,6 +9,7 @@ export default (req,res)=>{
     ACCESS_KEYS_definida:raw!==undefined,
     entradas,
     BLOB_READ_WRITE_TOKEN_definido:!!process.env.BLOB_READ_WRITE_TOKEN,
+    token:(()=>{const v=process.env.BLOB_READ_WRITE_TOKEN||'';const m=v.trim().match(/^vercel_blob_rw_([^_]+)_/);return{comecaCerto:/^vercel_blob_rw_/.test(v),tamanho:v.length,temAspas:/^["']|["']$/.test(v),espacosNasPontas:v!==v.trim(),idDoStoreNoToken:m?m[1]:null,BLOB_STORE_ID:process.env.BLOB_STORE_ID||null,storeBate:!!m&&('store_'+m[1]===process.env.BLOB_STORE_ID)}})(),
     BLOB_PREFIX_definido:!!process.env.BLOB_PREFIX,
     ambiente:process.env.VERCEL_ENV,
     deploy:process.env.VERCEL_DEPLOYMENT_ID
