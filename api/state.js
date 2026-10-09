@@ -1,10 +1,14 @@
-import {head} from '@vercel/blob';
+import {list} from '@vercel/blob';
 import {auth,rd,wr,PFX,TOKEN} from './_lib.js';
+const PATH=`${PFX}/state.json`;
+// list() devolve vazio quando o arquivo não existe (sem exceção), então não depende do texto do erro.
 const cur=async()=>{
-  try{return await rd((await head(`${PFX}/state.json`,{token:TOKEN})).url)}
-  catch(e){if(e?.name==='BlobNotFoundError'||/does not exist|not found/i.test(String(e?.message||'')))return null;throw e}
+  const {blobs}=await list({prefix:PATH,limit:5,token:TOKEN});
+  const b=blobs.find(x=>x.pathname===PATH);
+  return b?await rd(b.url):null;
 };
 export default async(req,res)=>{
+  res.setHeader('x-state-v','3');
   try{
     const u=await auth(req,res);if(!u)return;
     if(req.method==='GET')return res.status(200).json(await cur());
