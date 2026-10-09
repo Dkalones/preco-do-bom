@@ -34,7 +34,7 @@ export async function auth(req,res){
   const u=match(req);
   if(u)return u;
   if(String(req.headers['x-key']||'')){
-    await put(p,JSON.stringify({n:live?rl.n+1:1,t0:live?rl.t0:now}),{access:'public',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',cacheControlMaxAge:60});
+    try{await put(p,JSON.stringify({n:live?rl.n+1:1,t0:live?rl.t0:now}),{access:'public',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',cacheControlMaxAge:60})}catch(e){}
   }
   res.status(401).json({error:'sem acesso'});return null;
 }
