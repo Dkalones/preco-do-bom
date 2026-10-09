@@ -3,8 +3,8 @@ import {auth,rd,wr,PFX} from './_lib.js';
 const D=`${PFX}/backups/`,MAX=40;
 const all=async()=>{const {blobs}=await list({prefix:D,limit:200});return blobs.sort((a,b)=>+new Date(b.uploadedAt)-+new Date(a.uploadedAt))};
 export default async(req,res)=>{
-  const u=await auth(req,res);if(!u)return;
   try{
+    const u=await auth(req,res);if(!u)return;
     if(req.method==='GET'){
       const n=req.query.name;
       if(n){
