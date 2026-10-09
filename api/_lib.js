@@ -5,8 +5,9 @@ export const PFX=process.env.BLOB_PREFIX||'pdb';
 const match=req=>{
   const k=Buffer.from(String(req.headers['x-key']||''));
   for(const p of (process.env.ACCESS_KEYS||'').split(',')){
-    const i=p.indexOf(':');if(i<1)continue;
-    const n=p.slice(0,i).trim(),s=Buffer.from(p.slice(i+1).trim());
+    const i=p.indexOf(':');
+    const n=i<1?'geral':p.slice(0,i).trim();
+    const s=Buffer.from((i<1?p:p.slice(i+1)).trim());
     if(s.length&&s.length===k.length&&timingSafeEqual(s,k))return n;
   }
   return null;
