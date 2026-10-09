@@ -5,8 +5,8 @@ const cur=async()=>{
   catch(e){if(e?.name==='BlobNotFoundError')return null;throw e}
 };
 export default async(req,res)=>{
-  const u=await auth(req,res);if(!u)return;
   try{
+    const u=await auth(req,res);if(!u)return;
     if(req.method==='GET')return res.status(200).json(await cur());
     if(req.method==='PUT'){
       const {state,base}=req.body||{};
