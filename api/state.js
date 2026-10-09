@@ -1,7 +1,7 @@
 import {head} from '@vercel/blob';
-import {auth,rd,wr,PFX} from './_lib.js';
+import {auth,rd,wr,PFX,TOKEN} from './_lib.js';
 const cur=async()=>{
-  try{return await rd((await head(`${PFX}/state.json`)).url)}
+  try{return await rd((await head(`${PFX}/state.json`,{token:TOKEN})).url)}
   catch(e){if(e?.name==='BlobNotFoundError')return null;throw e}
 };
 export default async(req,res)=>{
