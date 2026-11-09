@@ -148,10 +148,174 @@ button,input,select{min-height:40px}
 @media(max-width:600px){body{font-size:14px}.content{padding:14px 12px calc(104px + env(safe-area-inset-bottom,0px))}.ph{gap:10px;margin-bottom:13px}.ph h1{font-size:21px}.ph .sub2{font-size:12px}.ph>button{width:100%}.gb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.gb-panel,.card{padding:13px;border-radius:13px}.gb-stat strong{font-size:19px}.cols{grid-template-columns:minmax(0,1fr)}.gb-form{grid-template-columns:minmax(0,1fr)}.gb-table{min-width:580px}.menu-n button{flex-basis:68px}.side{padding-left:4px;padding-right:4px}.gb-menu-item{align-items:flex-start}.gb-menu-item button{flex:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* Página de entrada institucional */
+body:not(.app-open) .app{display:none!important}
+#welcome{--w-ink:#17332c;--w-muted:#6b817a;--w-green:#087b5e;--w-mint:#dff4eb;--w-line:#e2ebe6;--w-paper:#f8fbf8;min-height:100vh;background:#f8fbf8;color:var(--w-ink);font-family:var(--fb)}
+#welcome *{box-sizing:border-box}
+.welcome-nav{height:82px;padding:0 clamp(22px,6vw,100px);display:flex;align-items:center;justify-content:space-between;gap:26px;background:rgba(255,255,255,.92);border-bottom:1px solid #e6eee9;position:relative;z-index:2}
+.welcome-brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#183b30;font:800 19px var(--fd);letter-spacing:-.6px;white-space:nowrap}
+.welcome-brand b,.welcome-footer-brand b{color:#0b9b72}
+.welcome-brand small{display:block;font:500 10px var(--fb);letter-spacing:.1px;color:#81918a;margin-top:2px}
+.welcome-mark{width:42px;height:42px;border-radius:13px;background:#e3f5ed;color:#07805f;display:grid;place-items:center}
+.welcome-mark svg{width:32px;height:32px}
+.welcome-links{display:flex;gap:clamp(18px,3vw,42px);align-items:center}
+.welcome-links a{font-size:13px;font-weight:600;color:#61746c;text-decoration:none;transition:color .2s}
+.welcome-links a:hover{color:#07805f}
+.welcome-login{border:1px solid #d8e7df;background:#fff;color:#17664f;border-radius:11px;padding:11px 16px;font-size:13px;font-weight:700;white-space:nowrap}
+.welcome-login span{margin-left:10px;color:#0b9b72}
+.welcome-main{max-width:1440px;margin:auto;padding:0 clamp(22px,6vw,100px)}
+.welcome-hero{min-height:600px;padding:76px 0 70px;display:grid;grid-template-columns:minmax(0,.92fr) minmax(480px,1.08fr);gap:54px;align-items:center}
+.welcome-copy{max-width:570px}
+.welcome-eyebrow,.welcome-section-head>span,.welcome-how>div>span,.welcome-bottom-cta>div>span{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:#07805f}
+.welcome-eyebrow i,.welcome-live i{width:7px;height:7px;border-radius:50%;background:#16b987;box-shadow:0 0 0 4px #16b9871e}
+.welcome-copy h1{font:800 clamp(44px,5.2vw,70px)/1.04 var(--fd);letter-spacing:-3.2px;margin:25px 0 22px;color:#173c30}
+.welcome-copy h1 em{font-style:normal;color:#0a966d}
+.welcome-copy>p{font-size:16px;line-height:1.8;color:#6b8077;max-width:510px;margin:0}
+.welcome-actions{display:flex;align-items:center;gap:25px;margin-top:34px;flex-wrap:wrap}
+.welcome-primary{background:#087d5e;color:#fff;border:1px solid #087d5e;border-radius:12px;padding:15px 21px;font-size:14px;font-weight:700;box-shadow:0 8px 20px #087d5e2b;transition:transform .2s,box-shadow .2s}
+.welcome-primary:hover{background:#06694f;transform:translateY(-2px);box-shadow:0 12px 24px #087d5e38}
+.welcome-primary span{font-size:19px;margin-left:16px;vertical-align:-1px}
+.welcome-secondary{font-size:13px;color:#45675a;text-decoration:none;font-weight:700}
+.welcome-secondary span{margin-left:7px;color:#0a966d}
+.welcome-proof{display:flex;align-items:center;gap:10px;margin-top:35px;color:#81918a;font-size:11px;font-weight:600}
+.welcome-proof-icon{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#dff4eb;color:#087d5e;font-size:11px}
+.welcome-proof b{color:#c3d0c9}
+.welcome-visual{position:relative;min-width:0;padding:22px 0}
+.welcome-glow{position:absolute;width:75%;height:80%;right:0;top:8%;background:radial-gradient(ellipse,#b8e9d5 0%,#dff3e9 45%,transparent 74%);filter:blur(16px)}
+.welcome-window{position:relative;background:#fff;border:1px solid #e0eae4;border-radius:19px;box-shadow:0 30px 75px #234f3b1b,0 5px 16px #234f3b0b;overflow:hidden;transform:perspective(1300px) rotateY(-4deg) rotateX(1deg)}
+.welcome-window-top{height:48px;display:flex;align-items:center;gap:15px;padding:0 18px;border-bottom:1px solid #edf2ee;background:#fcfdfc;color:#9aaba2;font-size:9px;font-weight:800;letter-spacing:1px}
+.welcome-dots{display:flex;gap:5px}.welcome-dots i{width:7px;height:7px;background:#d9e4dd;border-radius:50%}.welcome-dots i:first-child{background:#edb3a6}.welcome-dots i:nth-child(2){background:#edce8b}.welcome-dots i:nth-child(3){background:#9ed6b9}
+.welcome-window-top>span{flex:1}.welcome-window-top>span b{color:#0a966d}
+.welcome-live{display:flex;align-items:center;gap:7px;color:#6d8c7d;font-size:8px}
+.welcome-live i{width:6px;height:6px}
+.welcome-window-body{padding:24px 25px 20px}
+.welcome-preview-heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:17px}
+.welcome-preview-heading small{font-size:8px;letter-spacing:1.1px;color:#92a49a;font-weight:800}
+.welcome-preview-heading h3{font:800 23px var(--fd);letter-spacing:-.7px;margin:3px 0 0;color:#203d31}
+.welcome-date{font-size:9px;color:#8a9c92;border:1px solid #e7eee9;padding:7px 9px;border-radius:7px}
+.welcome-metrics{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.welcome-metrics>div{border:1px solid #e9f0eb;border-radius:11px;padding:13px 14px;background:#fff}
+.welcome-metrics small{display:block;color:#8b9b92;font-size:9px;font-weight:600}
+.welcome-metrics b{display:block;color:#203e32;font:800 21px var(--fd);margin:4px 0}
+.welcome-metrics em{font-style:normal;font-size:8px;color:#13936e}
+.welcome-chart-card{margin-top:12px;border:1px solid #e9f0eb;border-radius:11px;padding:13px 14px 9px}
+.welcome-chart-title{display:flex;justify-content:space-between;align-items:center;color:#425e50;font-size:10px;font-weight:700}
+.welcome-chart-title small{font-size:8px;color:#9aa9a0;font-weight:500}
+.welcome-chart{display:flex;gap:10px;height:142px;margin-top:9px}
+.welcome-chart-y{display:flex;flex-direction:column;justify-content:space-between;padding:1px 0 19px;color:#a1b0a7;font-size:8px}
+.welcome-chart-plot{position:relative;flex:1;min-width:0}
+.welcome-gridline{position:absolute;left:0;right:0;border-top:1px dashed #e7eee9}.welcome-gridline:nth-child(1){top:0}.welcome-gridline:nth-child(2){top:33%}.welcome-gridline:nth-child(3){top:66%}
+.welcome-chart-plot svg{position:absolute;inset:0 0 18px;width:100%;height:calc(100% - 18px);overflow:visible}
+.welcome-chart-x{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;color:#a1b0a7;font-size:7px}
+.welcome-preview-bottom{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.welcome-preview-bottom>div{display:flex;gap:8px;align-items:center;padding:9px 7px;border-radius:9px;background:#f7faf8}
+.welcome-mini-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;background:#e5f5ed;color:#07805f;font-size:16px}
+.welcome-preview-bottom b,.welcome-preview-bottom small{display:block}.welcome-preview-bottom b{font-size:9px;color:#3d594b}.welcome-preview-bottom small{font-size:7px;color:#91a198;margin-top:2px}
+.welcome-float{position:absolute;right:-22px;bottom:0;display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border:1px solid #e5eee8;border-radius:12px;box-shadow:0 12px 30px #234f3b18}
+.welcome-float>span{width:30px;height:30px;border-radius:9px;background:#e1f5eb;color:#0b966c;display:grid;place-items:center}
+.welcome-float b,.welcome-float small{display:block}.welcome-float b{font-size:11px;color:#264637}.welcome-float small{font-size:9px;color:#8b9b92;margin-top:2px}
+.welcome-features{padding:67px 0 76px;border-top:1px solid #e7eee9}
+.welcome-section-head{text-align:center;max-width:650px;margin:0 auto 34px}
+.welcome-section-head>span,.welcome-how>div>span,.welcome-bottom-cta>div>span{justify-content:center}
+.welcome-section-head h2,.welcome-how h2,.welcome-bottom-cta h2{font:800 clamp(28px,3vw,39px)/1.14 var(--fd);letter-spacing:-1.4px;color:#1b3b2e;margin:13px 0}
+.welcome-section-head p,.welcome-how p,.welcome-bottom-cta p{font-size:14px;line-height:1.7;color:#7a8d83;margin:0}
+.welcome-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.welcome-feature{background:#fff;border:1px solid #e6eee8;border-radius:14px;padding:22px;transition:transform .2s,border-color .2s,box-shadow .2s}
+.welcome-feature:hover{transform:translateY(-3px);border-color:#b8ddca;box-shadow:0 12px 25px #234f3b0d}
+.welcome-feature-icon{width:38px;height:38px;border-radius:11px;background:#e5f5ed;color:#07805f;display:grid;place-items:center;font-size:20px}
+.welcome-feature h3{font:700 15px var(--fd);color:#234436;margin:15px 0 7px}
+.welcome-feature p{font-size:12px;line-height:1.65;color:#829188;margin:0}
+.welcome-how{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;padding:62px 7%;background:#eef7f1;border-radius:20px;margin:0 0 72px}
+.welcome-how>div>span{justify-content:flex-start}
+.welcome-how h2{max-width:420px}
+.welcome-how p{max-width:440px}
+.welcome-steps{display:grid;gap:13px}
+.welcome-steps>div{display:flex;align-items:center;gap:16px;padding:13px 15px;border:1px solid #dcebe1;border-radius:12px;background:#ffffffb8}
+.welcome-steps>div>b{font:800 17px var(--fd);color:#0b966d}
+.welcome-steps strong,.welcome-steps small{display:block}.welcome-steps strong{font-size:12px;color:#2b4b3a}.welcome-steps small{font-size:10px;color:#83958a;margin-top:3px}
+.welcome-bottom-cta{display:flex;justify-content:space-between;align-items:center;gap:25px;padding:0 0 68px}
+.welcome-bottom-cta>div>span{justify-content:flex-start}
+.welcome-bottom-cta h2{font-size:29px;margin:10px 0}
+.welcome-bottom-cta p{font-size:12px}
+.welcome-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:23px clamp(22px,6vw,100px);border-top:1px solid #e5ede7;background:#fff;color:#8b9b92;font-size:10px}
+.welcome-footer-brand{font:800 15px var(--fd);color:#183b30;text-decoration:none}
+@media(max-width:1050px){.welcome-hero{grid-template-columns:1fr;gap:20px;padding-top:65px}.welcome-copy{max-width:720px}.welcome-visual{max-width:700px;width:100%;margin:0 auto}.welcome-how{gap:30px;padding:45px 5%}}
+@media(max-width:700px){.welcome-nav{height:70px;padding:0 17px}.welcome-brand{font-size:17px}.welcome-mark{width:37px;height:37px}.welcome-brand small{display:none}.welcome-links{display:none}.welcome-login{padding:10px 12px;font-size:12px}.welcome-main{padding:0 18px}.welcome-hero{min-height:0;padding:53px 0 56px}.welcome-copy h1{font-size:46px;letter-spacing:-2.4px;margin:20px 0 17px}.welcome-copy>p{font-size:14px;line-height:1.7}.welcome-actions{gap:18px;margin-top:25px}.welcome-primary{padding:14px 16px}.welcome-proof{flex-wrap:wrap;margin-top:25px;font-size:10px}.welcome-visual{padding:15px 0 23px}.welcome-window{transform:none;border-radius:14px}.welcome-window-top{height:39px;padding:0 11px;gap:8px;font-size:7px}.welcome-window-body{padding:15px 12px}.welcome-preview-heading h3{font-size:19px}.welcome-metrics{gap:7px}.welcome-metrics>div{padding:10px}.welcome-metrics b{font-size:17px}.welcome-chart-card{padding:10px}.welcome-chart{height:120px}.welcome-preview-bottom{gap:5px}.welcome-preview-bottom>div{gap:5px;padding:7px 4px}.welcome-mini-icon{width:22px;height:22px;font-size:13px}.welcome-preview-bottom b{font-size:8px}.welcome-preview-bottom small{font-size:6px}.welcome-float{right:-4px;bottom:0;padding:9px 11px}.welcome-features{padding:48px 0}.welcome-section-head h2,.welcome-how h2{font-size:30px}.welcome-feature-grid{grid-template-columns:1fr 1fr;gap:9px}.welcome-feature{padding:15px}.welcome-feature h3{font-size:13px}.welcome-feature p{font-size:11px}.welcome-how{grid-template-columns:1fr;gap:23px;padding:29px 20px;margin-bottom:48px}.welcome-bottom-cta{align-items:flex-start;flex-direction:column;padding-bottom:48px}.welcome-bottom-cta h2{font-size:26px}.welcome-footer{flex-wrap:wrap;padding:20px 18px}.welcome-footer>span{order:3;width:100%}}
+@media(max-width:380px){.welcome-copy h1{font-size:40px}.welcome-feature-grid{grid-template-columns:1fr}.welcome-proof{gap:7px}.welcome-preview-bottom small{display:none}}
+@media(prefers-reduced-motion:reduce){.welcome-feature,.welcome-primary{transition:none}}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<section id="welcome" class="welcome">
+  <header class="welcome-nav">
+    <a class="welcome-brand" href="#inicio" aria-label="Preço do Bom - início">
+      <span class="welcome-mark"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M7 9h6l5 23h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 17h25l-3 15H18" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="21" cy="38" r="3" fill="currentColor"/><circle cx="34" cy="38" r="3" fill="currentColor"/><path d="M23 8h12v10H23z" fill="currentColor" opacity=".18"/><path d="M27 11h4M27 14h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+      <span>Preço do <b>Bom</b><small>Gestão inteligente para o seu negócio</small></span>
+    </a>
+    <nav class="welcome-links" aria-label="Navegação principal">
+      <a href="#welcome-recursos">Recursos</a>
+      <a href="#welcome-como">Como funciona</a>
+      <a href="#welcome-sobre">Sobre a plataforma</a>
+    </nav>
+    <button class="welcome-login" type="button" data-enter-app>Entrar no painel <span>→</span></button>
+  </header>
+
+  <main id="inicio" class="welcome-main">
+    <section class="welcome-hero">
+      <div class="welcome-copy">
+        <div class="welcome-eyebrow"><i></i> CONTROLE SEU NEGÓCIO COM MAIS CLAREZA</div>
+        <h1>Seu negócio merece preços que <em>fazem sentido.</em></h1>
+        <p>Organize seus produtos, entenda seus custos e acompanhe os resultados em um só lugar. Menos achismo na hora de precificar. Mais segurança para decidir.</p>
+        <div class="welcome-actions">
+          <button class="welcome-primary" type="button" data-enter-app> Acessar meu painel <span>→</span></button>
+          <a class="welcome-secondary" href="#welcome-recursos">Conhecer recursos <span>↓</span></a>
+        </div>
+        <div class="welcome-proof"><span class="welcome-proof-icon">✓</span><span>Simples de usar</span><b>·</b><span>Feito para pequenos negócios</span></div>
+      </div>
+      <div class="welcome-visual" aria-label="Prévia ilustrativa do painel de gestão">
+        <div class="welcome-glow"></div>
+        <div class="welcome-window">
+          <div class="welcome-window-top"><div class="welcome-dots"><i></i><i></i><i></i></div><span>PREÇO DO BOM <b>·</b> VISÃO GERAL</span><div class="welcome-live"><i></i> PAINEL</div></div>
+          <div class="welcome-window-body">
+            <div class="welcome-preview-heading"><div><small>SEU NEGÓCIO, EM FOCO</small><h3>Visão geral</h3></div><span class="welcome-date">Últimos 30 dias</span></div>
+            <div class="welcome-metrics">
+              <div><small>Faturamento</small><b>R$ 8.420</b><em>↗ Acompanhe suas vendas</em></div>
+              <div><small>Lucro estimado</small><b>R$ 2.360</b><em>↗ Veja sua rentabilidade</em></div>
+            </div>
+            <div class="welcome-chart-card"><div class="welcome-chart-title"><span>Desempenho do negócio</span><small>Exemplo ilustrativo</small></div><div class="welcome-chart"><div class="welcome-chart-y"><i>8k</i><i>6k</i><i>4k</i><i>2k</i></div><div class="welcome-chart-plot"><div class="welcome-gridline"></div><div class="welcome-gridline"></div><div class="welcome-gridline"></div><svg viewBox="0 0 440 140" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="welcomeArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#36c49d" stop-opacity=".27"/><stop offset="1" stop-color="#36c49d" stop-opacity="0"/></linearGradient></defs><path d="M0 112 C35 103 42 91 76 96 S124 69 158 82 S205 46 236 61 S285 37 315 49 S363 22 390 33 S420 13 440 17 V140 H0Z" fill="url(#welcomeArea)"/><path d="M0 112 C35 103 42 91 76 96 S124 69 158 82 S205 46 236 61 S285 37 315 49 S363 22 390 33 S420 13 440 17" fill="none" stroke="#20ae88" stroke-width="3" stroke-linecap="round"/></svg><div class="welcome-chart-x"><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span></div></div></div></div>
+            <div class="welcome-preview-bottom"><div><span class="welcome-mini-icon">◇</span><span><b>Precificação</b><small>Custos e margens sob controle</small></span></div><div><span class="welcome-mini-icon">▤</span><span><b>Estoque</b><small>Insumos e movimentações</small></span></div><div><span class="welcome-mini-icon">↗</span><span><b>Relatórios</b><small>Decisões com informação</small></span></div></div>
+          </div>
+        </div>
+        <div class="welcome-float"><span>✦</span><div><b>Mais clareza.</b><small>Melhores decisões.</small></div></div>
+      </div>
+    </section>
+
+    <section id="welcome-recursos" class="welcome-features">
+      <div class="welcome-section-head"><span>UMA GESTÃO MAIS ORGANIZADA</span><h2>Tudo o que você precisa para cuidar melhor dos números.</h2><p>Ferramentas essenciais para transformar dados do dia a dia em decisões mais conscientes.</p></div>
+      <div class="welcome-feature-grid">
+        <article class="welcome-feature"><span class="welcome-feature-icon">⌁</span><h3>Precificação inteligente</h3><p>Calcule custos, margens e preços de venda com mais confiança.</p></article>
+        <article class="welcome-feature"><span class="welcome-feature-icon">▦</span><h3>Produtos e insumos</h3><p>Organize fichas técnicas, ingredientes, quantidades e custos.</p></article>
+        <article class="welcome-feature"><span class="welcome-feature-icon">▣</span><h3>Controle de estoque</h3><p>Acompanhe saldos, entradas, saídas e níveis mínimos.</p></article>
+        <article class="welcome-feature"><span class="welcome-feature-icon">↗</span><h3>Vendas e resultados</h3><p>Registre vendas e visualize faturamento e lucro estimado.</p></article>
+        <article class="welcome-feature"><span class="welcome-feature-icon">▤</span><h3>Compras e fornecedores</h3><p>Centralize fornecedores e registre a reposição de insumos.</p></article>
+        <article class="welcome-feature"><span class="welcome-feature-icon">◫</span><h3>Relatórios e exportação</h3><p>Consulte informações e leve seus dados para outros formatos.</p></article>
+      </div>
+    </section>
+
+    <section id="welcome-como" class="welcome-how">
+      <div><span>COMECE SEM COMPLICAÇÃO</span><h2>Do cadastro à decisão, no seu ritmo.</h2><p>Entre no painel, cadastre seus produtos e insumos e use as informações para acompanhar a saúde financeira da operação.</p></div>
+      <div class="welcome-steps"><div><b>01</b><span><strong>Cadastre</strong><small>Adicione produtos, receitas e insumos.</small></span></div><div><b>02</b><span><strong>Entenda</strong><small>Confira custos, margens e preços sugeridos.</small></span></div><div><b>03</b><span><strong>Acompanhe</strong><small>Registre vendas e monitore seus resultados.</small></span></div></div>
+    </section>
+
+    <section id="welcome-sobre" class="welcome-bottom-cta"><div><span>PREÇO DO BOM</span><h2>Mais controle para fazer seu negócio crescer.</h2><p>Seu espaço de trabalho para precificar, organizar e acompanhar.</p></div><button class="welcome-primary" type="button" data-enter-app>Entrar no painel <span>→</span></button></section>
+  </main>
+  <footer class="welcome-footer"><a class="welcome-footer-brand" href="#inicio">Preço do <b>Bom</b></a><span>Gestão simples. Decisões melhores.</span><small>© 2026 Preço do Bom</small></footer>
+</section>
+
 <div class="app">
 <nav class="side">
   <div class="biz"><div class="av" id="av"></div><div><b id="bizn">Meu Negócio</b><small>Precificação</small></div></div>
@@ -472,5 +636,20 @@ renderList();renderEd();
 })();
 </script>
 <script src="/gestao.js"></script>
+
+<script>
+document.querySelectorAll('[data-enter-app]').forEach(button=>button.addEventListener('click',()=>{
+  document.body.classList.add('app-open');
+  document.getElementById('welcome').setAttribute('hidden','');
+  window.scrollTo({top:0,behavior:'instant'});
+  const first=document.querySelector('.menu-n button.on')||document.querySelector('.menu-n button[data-v="itens"]');
+  if(first)first.click();
+}));
+document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a').forEach(link=>link.addEventListener('click',()=>{
+  const target=document.querySelector(link.getAttribute('href'));
+  if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+</script>
+
 </body>
 </html>
