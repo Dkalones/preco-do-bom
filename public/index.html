@@ -742,3 +742,64 @@ document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a
 
 </body>
 </html>
+
+
+/* Correção definitiva do layout responsivo */
+html,body{max-width:100%;overflow-x:hidden}
+body{min-width:320px}
+.app{width:100%;max-width:1920px;margin-inline:auto;grid-template-columns:clamp(216px,17vw,272px) minmax(0,1fr);overflow:visible}
+.side{width:100%;min-width:0;height:100dvh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden}
+.content{width:100%;max-width:1600px;min-width:0;margin-inline:auto;padding:clamp(18px,2.2vw,36px)}
+.view,.gb-panel,.card,.ph,.split,.cols{min-width:0}
+.split{grid-template-columns:minmax(220px,.8fr) minmax(0,1.6fr)}
+.cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gb-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.gb-table{width:100%;min-width:600px}
+.gb-panel>div[style*="overflow"],.gb-panel .table-wrap{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.gb-form{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
+@media(max-width:1200px) and (min-width:1025px){
+ .app{grid-template-columns:210px minmax(0,1fr)}
+ .side{padding-inline:9px}
+ .content{padding:20px}
+ .gb-grid,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .split{grid-template-columns:minmax(200px,.72fr) minmax(0,1.4fr)}
+}
+@media(max-width:1024px){
+ .app{display:block;min-height:100dvh;overflow:visible}
+ .side{position:fixed;inset:auto 0 0;width:100%;height:auto;min-height:0;max-height:96px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));overflow-x:auto;overflow-y:hidden;z-index:50;border-top:1px solid rgba(255,255,255,.12)}
+ .biz,.brand{display:none}
+ .menu-n{display:flex;flex-direction:row;justify-content:flex-start;gap:4px;width:max-content;min-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+ .menu-n::-webkit-scrollbar{display:none}
+ .menu-n button{flex:0 0 72px;width:72px;min-height:60px;padding:5px 3px;gap:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:10px}
+ .menu-n button svg{width:19px;height:19px;flex:none}
+ .menu-n button span{font-size:10px;line-height:1.1;white-space:nowrap}
+ .content{max-width:none;padding:20px 18px calc(112px + env(safe-area-inset-bottom,0px))}
+ .split{grid-template-columns:minmax(0,1fr)}
+ .gb-grid,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .content{padding:15px 12px calc(112px + env(safe-area-inset-bottom,0px))}
+ .ph{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+ .ph>div{flex:1 1 100%;min-width:0}
+ .ph h1{font-size:22px}
+ .ph>button{width:100%}
+ .cols{grid-template-columns:minmax(0,1fr)}
+ .gb-form{grid-template-columns:minmax(0,1fr)}
+ .gb-grid{gap:8px}
+ .card,.gb-panel{padding:14px;border-radius:13px}
+ .gb-stat strong{font-size:clamp(18px,5vw,22px)}
+ .gb-actions{flex-wrap:wrap}
+ .welcome-main{padding-inline:16px}
+ .welcome-hero{grid-template-columns:minmax(0,1fr);min-height:0}
+ .welcome-visual{width:100%;max-width:100%;min-width:0}
+ .welcome-window{width:100%;max-width:100%;transform:none}
+ .welcome-float{right:0}
+}
+@media(max-width:380px){
+ .content{padding-inline:10px}
+ .gb-grid{grid-template-columns:minmax(0,1fr)}
+ .menu-n button{flex-basis:64px;width:64px}
+ .welcome-copy h1{font-size:40px}
+}
+
