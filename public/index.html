@@ -121,6 +121,14 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 20px 28px}
 .alert{background:#fff4e5;border:1px solid #f3c98b;border-radius:14px;padding:12px 14px;margin-bottom:16px;color:#5a3b00}.arow{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid #f3dcb5;font-size:14px;margin-top:8px}
 .mark svg{width:26px;height:26px;stroke-width:3;color:#fff}.brand .mark{width:38px;height:38px}
 .av svg{width:24px;height:24px;color:#fff;stroke-width:3}
+
+/* Módulos de gestão 2.0 */
+.gb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.gb-panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--sh);margin-bottom:16px;min-width:0}
+.gb-panel h2{margin-bottom:8px}.gb-stat span{display:block;color:var(--mut);font-size:12px}.gb-stat strong{display:block;font:800 25px var(--fd);letter-spacing:-.5px;margin-top:4px}.gb-stat small{color:var(--mut)}
+.gb-table{width:100%;border-collapse:collapse;font-size:14px}.gb-table th,.gb-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}.gb-table th{font-size:12px;color:var(--mut);font-weight:600}.gb-table input,.gb-table select{min-width:75px;padding:7px}.gb-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;align-items:end}.gb-form label{margin-bottom:4px}.gb-form button{min-height:40px}.gb-muted{color:var(--mut);font-size:13px}.gb-good{color:var(--pri);font-weight:700}.gb-bad{color:var(--bad);font-weight:700}.gb-chip{display:inline-block;border-radius:99px;padding:3px 8px;background:var(--soft);font-size:11px;color:var(--mut)}.gb-chart{width:100%;height:220px;display:block}.gb-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.gb-empty{padding:22px;text-align:center;color:var(--mut)}.gb-menu-item{display:flex;justify-content:space-between;gap:14px;padding:12px 4px;border-bottom:1px solid var(--line)}.gb-menu-item:last-child{border:0}.gb-danger{color:var(--bad)}
+@media(max-width:900px){.side{overflow-x:auto}.menu-n{justify-content:flex-start;overflow-x:auto;min-width:0}.menu-n button{flex:0 0 68px}.menu-n button span{white-space:nowrap;font-size:10px}.side .brand{display:none}}
+@media(max-width:600px){.gb-table{font-size:12px}.gb-table th,.gb-table td{padding:8px 5px}.gb-stat strong{font-size:21px}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>body.lock>*{visibility:hidden}#sync{visibility:visible!important}</style>
@@ -130,15 +138,50 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 20px 28px}
 <nav class="side">
   <div class="biz"><div class="av" id="av"></div><div><b id="bizn">Meu Negócio</b><small>Precificação</small></div></div>
   <div class="menu-n">
+    <button data-v="dashboard"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 4 3 6-7"/></svg><span>Visão geral</span></button>
     <button data-v="itens" class="on"><svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Produtos</span></button>
     <button data-v="insumos"><svg viewBox="0 0 24 24"><path d="M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6"/></svg><span>Insumos</span></button>
     <button data-v="config"><svg viewBox="0 0 24 24"><path d="M4 6h10M20 6h0M4 12h4M14 12h6M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Ajustes</span></button>
     <button data-v="export"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg><span>Exportar</span></button>
+    <button data-v="estoque"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7M12 11v10"/></svg><span>Estoque</span></button>
+    <button data-v="vendas"><svg viewBox="0 0 24 24"><path d="M4 5h16l-1.5 14h-13L4 5zM8 9v0M16 9v0M9 14h6"/></svg><span>Vendas</span></button>
+    <button data-v="fornecedores"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13M7 21v-7h10v7M8 9h.01M12 9h.01M16 9h.01"/></svg><span>Compras</span></button>
+    <button data-v="cardapio"><svg viewBox="0 0 24 24"><path d="M4 3v8M7 3v8M4 7h3M5.5 11v10M13 3v18M13 3c4 2 4 7 0 9"/></svg><span>Cardápio</span></button>
+    <button data-v="inteligencia"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3zM9 22h6M9 9a3 3 0 0 1 3-3"/></svg><span>Preços</span></button>
+    <button data-v="relatorios"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 15l3-4 3 2 5-7"/></svg><span>Relatórios</span></button>
     <button data-v="tutorial"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1 1-1.1 1.7M12 17h0"/></svg><span>Tutorial</span></button>
   </div>
   <div class="brand"><div class="mark"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-label="Preço do Bom"><path d="M4 11h8l7 30h29"/><path d="M14 23h36l-3 18"/><rect x="19" y="8" width="13" height="15" rx="1.5"/><rect x="34" y="5" width="14" height="18" rx="1.5"/><path d="M22.5 13q3 3.5 6 0M37.5 10q3.5 3.5 7 0"/><circle cx="23" cy="51" r="3.6"/><circle cx="43" cy="51" r="3.6"/><g transform="translate(47 34) rotate(24)"><rect x="-8.5" y="-10.5" width="17" height="21" rx="2.5" fill="#fff" stroke="none"/><circle cx="0" cy="-6.5" r="1.5" fill="var(--pri)" stroke="none"/><text x="0" y="7" text-anchor="middle" font-size="13" font-weight="800" fill="var(--pri)" stroke="none" font-family="sans-serif">$</text></g></svg></div><div>Preço do <span>Bom</span></div></div>
 </nav>
 <div class="content">
+  <section class="view" id="v-dashboard" hidden>
+    <div class="ph"><div><h1>Visão geral</h1><p class="sub2">Acompanhe o desempenho do seu negócio em um só lugar.</p></div><button class="p" data-goto="vendas">+ Registrar venda</button></div>
+    <div id="gb-dashboard"></div>
+  </section>
+  <section class="view" id="v-estoque" hidden>
+    <div class="ph"><div><h1>Estoque</h1><p class="sub2">Acompanhe quantidades, níveis mínimos e movimentações dos insumos.</p></div><button class="p" id="gb-stock-adjust-open">Ajustar estoque</button></div>
+    <div id="gb-stock"></div>
+  </section>
+  <section class="view" id="v-vendas" hidden>
+    <div class="ph"><div><h1>Vendas</h1><p class="sub2">Registre vendas para acompanhar faturamento e consumo de ingredientes.</p></div></div>
+    <div id="gb-sales"></div>
+  </section>
+  <section class="view" id="v-fornecedores" hidden>
+    <div class="ph"><div><h1>Compras e fornecedores</h1><p class="sub2">Cadastre fornecedores e registre entradas de insumos.</p></div></div>
+    <div id="gb-suppliers"></div>
+  </section>
+  <section class="view" id="v-cardapio" hidden>
+    <div class="ph"><div><h1>Cardápio</h1><p class="sub2">Monte uma apresentação simples dos produtos disponíveis para seus clientes.</p></div><button id="gb-menu-print">Imprimir cardápio</button></div>
+    <div id="gb-menu"></div>
+  </section>
+  <section class="view" id="v-inteligencia" hidden>
+    <div class="ph"><div><h1>Inteligência de preços</h1><p class="sub2">Encontre produtos com margem baixa e simule mudanças nos custos.</p></div></div>
+    <div id="gb-pricing"></div>
+  </section>
+  <section class="view" id="v-relatorios" hidden>
+    <div class="ph"><div><h1>Relatórios</h1><p class="sub2">Resumo de vendas, rentabilidade e estoque.</p></div><button class="p" id="gb-report-export">Exportar CSV</button></div>
+    <div id="gb-reports"></div>
+  </section>
   <section class="view" id="v-itens">
     <div class="ph"><div><h1>Produtos e pratos</h1><p class="sub2">Cadastre cada produto ou prato e descubra o preço ideal de venda.</p></div><button class="p" id="add">+ Novo item</button></div>
     <div id="alerts"></div><div class="kpis" id="kpis"></div>
@@ -414,5 +457,6 @@ renderList();renderEd();
  }catch(e){if(e!==401){ok();setStat('Erro na nuvem ('+(e&&e.message||e)+') – usando os dados deste aparelho')}}
 })();
 </script>
+<script src="/gestao.js"></script>
 </body>
 </html>
