@@ -129,11 +129,29 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 20px 28px}
 .gb-table{width:100%;border-collapse:collapse;font-size:14px}.gb-table th,.gb-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}.gb-table th{font-size:12px;color:var(--mut);font-weight:600}.gb-table input,.gb-table select{min-width:75px;padding:7px}.gb-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;align-items:end}.gb-form label{margin-bottom:4px}.gb-form button{min-height:40px}.gb-muted{color:var(--mut);font-size:13px}.gb-good{color:var(--pri);font-weight:700}.gb-bad{color:var(--bad);font-weight:700}.gb-chip{display:inline-block;border-radius:99px;padding:3px 8px;background:var(--soft);font-size:11px;color:var(--mut)}.gb-chart{width:100%;height:220px;display:block}.gb-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.gb-empty{padding:22px;text-align:center;color:var(--mut)}.gb-menu-item{display:flex;justify-content:space-between;gap:14px;padding:12px 4px;border-bottom:1px solid var(--line)}.gb-menu-item:last-child{border:0}.gb-danger{color:var(--bad)}
 @media(max-width:900px){.side{overflow-x:auto}.menu-n{justify-content:flex-start;overflow-x:auto;min-width:0}.menu-n button{flex:0 0 68px}.menu-n button span{white-space:nowrap;font-size:10px}.side .brand{display:none}}
 @media(max-width:600px){.gb-table{font-size:12px}.gb-table th,.gb-table td{padding:8px 5px}.gb-stat strong{font-size:21px}}
+
+/* Ajustes de dimensionamento e usabilidade */
+.app{grid-template-columns:252px minmax(0,1fr);width:100%;min-height:100vh}
+.side{height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+.content{max-width:1680px;margin-inline:auto;padding:clamp(16px,2.2vw,34px);min-width:0}
+.view{min-width:0}
+.ph{align-items:flex-start;flex-wrap:wrap}
+.ph>div{min-width:0;flex:1}
+.gb-panel,.card{min-width:0}
+.gb-table{min-width:560px}
+.gb-panel>div[style*="overflow"]{max-width:100%}
+.gb-form>div{min-width:0}
+button,input,select{min-height:40px}
+@media(min-width:1500px){.app{grid-template-columns:270px minmax(0,1fr)}.content{padding:36px 44px}}
+@media(max-width:1100px){.app{grid-template-columns:220px minmax(0,1fr)}.content{padding:22px}}
+@media(max-width:900px){.app{display:block}.side{height:auto;min-height:0;overflow:visible}.content{max-width:none;padding:18px 16px calc(104px + env(safe-area-inset-bottom,0px))}.menu-n{scrollbar-width:none}.menu-n::-webkit-scrollbar{display:none}.menu-n button{min-height:58px}.ph h1{font-size:22px}}
+@media(max-width:600px){body{font-size:14px}.content{padding:14px 12px calc(104px + env(safe-area-inset-bottom,0px))}.ph{gap:10px;margin-bottom:13px}.ph h1{font-size:21px}.ph .sub2{font-size:12px}.ph>button{width:100%}.gb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.gb-panel,.card{padding:13px;border-radius:13px}.gb-stat strong{font-size:19px}.cols{grid-template-columns:minmax(0,1fr)}.gb-form{grid-template-columns:minmax(0,1fr)}.gb-table{min-width:580px}.menu-n button{flex-basis:68px}.side{padding-left:4px;padding-right:4px}.gb-menu-item{align-items:flex-start}.gb-menu-item button{flex:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>body.lock>*{visibility:hidden}#sync{visibility:visible!important}</style>
 </head>
-<body class="lock">
+<body>
 <div class="app">
 <nav class="side">
   <div class="biz"><div class="av" id="av"></div><div><b id="bizn">Meu Negócio</b><small>Precificação</small></div></div>
@@ -196,7 +214,6 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 20px 28px}
     <div class="cols">
     <div><div class="card"><h2>Seu negócio</h2><label>Nome do estabelecimento</label><input id="nome" placeholder="Ex.: Grano Café"><label style="margin-top:12px">Logo (aparece no cardápio e na ficha em PDF)</label><input type="file" id="logo" accept="image/*"><button class="x" id="logoX" style="padding:6px 0">Remover logo</button></div>
     <div class="card"><div class="opt"><div><b>Arredondar para ,90</b><p class="tip" style="margin:2px 0 0">O preço sugerido já sai como R$ 23,90 em vez de R$ 23,41.</p></div><label class="sw"><input type="checkbox" id="a90"><i></i></label></div></div>
-    <div class="card"><h2>Dados e backups</h2><p class="tip" id="syncTxt" style="margin:0 0 10px">Os dados ficam na nuvem e neste navegador.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button id="bkNow">Fazer backup agora</button><button id="bkList">Ver backups</button><button id="chKey">Trocar chave</button></div><div id="bks"></div><div style="margin-top:12px"><button class="x" id="reset">Apagar todos os dados</button></div></div></div>
     <div><div class="card">
       <h2>Percentuais e custos</h2>
       <div class="g2"><div><label>Lucro desejado % <span class="inf" tabindex="0" data-tip="Quanto você quer ganhar de lucro em cada venda, em % do preço. Ex.: 20% significa que de cada R$ 100 vendidos, R$ 20 são lucro.">i</span></label><input type="number" id="lucro" min="0" step="0.5"></div>
@@ -250,16 +267,15 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const num=v=>parseFloat(String(v).replace(',','.'))||0;
 let S={cfg:{fixo:15,imp:8,lucro:20,deliv:0,cartao:2.9,desc:0,fm:'%',dm:'%'},lib:{},items:[],sel:null};
 try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-let K=localStorage.getItem('pdb_key')||'',tm,ver=0;
+let tm,ver=0; localStorage.removeItem('pdb_key');
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
 const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
 function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
-function askKey(bad){const k=prompt(bad?'Chave inválida. Digite novamente:':'Digite sua chave de acesso:');if(k&&k.trim()){K=k.trim();localStorage.setItem('pdb_key',K);if(bad)location.reload();return true}return false}
-async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json','x-key':K}});if(r.status===429){setStat('Muitas tentativas erradas. Tente de novo em 15 min.');throw 401}if(r.status===401){K='';localStorage.removeItem('pdb_key');setStat('Acesso restrito: recarregue e informe a chave');askKey(true);throw 401}let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
+async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json',...(o.headers||{})}});let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
 const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
 function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
-async function doPush(){if(!K)return;clearTimeout(tm);const v=ver;try{const r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
+async function doPush(){clearTimeout(tm);const v=ver;try{const r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
   if(r.s===409){if(confirm('Outra pessoa salvou depois da sua última sincronização.\nOK = sobrescrever com as suas alterações\nCancelar = usar a versão da nuvem (as suas ficam em backup)')){S._base=r.j.updatedAt;return doPush()}
     await bk('local');const c=(await api('state')).j;if(c)applyCloud(c);return}
   S._base=r.j.updatedAt;if(v===ver)S._dirty=0;persist();setStat('Salvo na nuvem ✓')}catch(e){if(e!==401)setStat('Erro na nuvem ('+(e&&e.message||e)+') – salvo só neste aparelho')}}
@@ -434,7 +450,6 @@ $('#reset').onclick=async()=>{if(!confirm('Apagar todos os itens, insumos e ajus
 async function listBk(){try{const r=await api('backup');$('#bks').innerHTML=r.j.length?r.j.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #0001"><span>${esc(new Date(b.at).toLocaleString('pt-BR'))} · <small>${esc(b.name.replace(/\.json$/,'').split('_').slice(1).join(' · '))}</small></span><button data-rs="${esc(b.name)}">Restaurar</button></div>`).join(''):'<p class="tip">Nenhum backup ainda.</p>'}catch(e){toast('Não consegui listar os backups')}}
 $('#bkList').onclick=listBk;
 $('#bkNow').onclick=async()=>{try{await bk('manual');toast('Backup salvo na nuvem');listBk()}catch(e){toast('Falha ao salvar o backup')}};
-$('#chKey').onclick=()=>{localStorage.removeItem('pdb_key');K='';location.reload()};
 $('#bks').onclick=async e=>{const n=e.target.dataset.rs;if(!n||!confirm('Restaurar '+n+'?\nO estado atual vira um backup antes.'))return;try{const r=await api('backup?name='+encodeURIComponent(n));await bk('antes-restaurar');localStorage.setItem('pdb',JSON.stringify({...r.j,_base:S._base||0,_dirty:1}));location.reload()}catch(e){toast('Falha ao restaurar')}};
 function renderIns(){const L=Object.entries(S.lib);$('#insl').innerHTML=L.length?'<div class="trow th"><span>Insumo</span><span>Preço R$</span><span>Qtd.</span><span>Unid.</span><span>Usado em</span><span></span></div>'+L.map(([k,l])=>`<div class="trow" data-k="${esc(k)}"><b>${esc(l.n)}</b><input type="number" min="0" step="0.01" data-i="preco" value="${l.preco}"><input type="number" min="0" step="any" data-i="qtd" value="${l.qtd}"><select data-i="un">${opts(l.un)}</select><span>${S.items.filter(it=>it.ings.some(g=>g.n.trim().toLowerCase()===k)).length} itens</span><button class="x" data-idel="${esc(k)}">✕</button></div>`).join(''):'<p class="tip">Os insumos aparecem aqui automaticamente quando você os usa em um item.</p>'}
 $('#insl').addEventListener('input',e=>{const t=e.target,r=t.closest('[data-k]');if(r&&t.dataset.i){S.lib[r.dataset.k][t.dataset.i]=t.value;renderList();save()}});
@@ -442,8 +457,7 @@ $('#insl').addEventListener('click',e=>{const k=e.target.dataset.idel;if(k!==und
 if(!S.items.find(i=>i.id===S.sel))S.sel=S.items[0]?.id||null;
 renderList();renderEd();
 (async()=>{
- const ok=()=>document.body.classList.remove('lock');
- if(!K&&!askKey()){setStat('Acesso restrito: recarregue e informe a chave');return}
+ const ok=()=>{};
  if(S._base===undefined&&S.items.length)S._dirty=1;
  try{
   const c=(await api('state')).j;ok();
