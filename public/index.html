@@ -267,7 +267,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const num=v=>parseFloat(String(v).replace(',','.'))||0;
 let S={cfg:{fixo:15,imp:8,lucro:20,deliv:0,cartao:2.9,desc:0,fm:'%',dm:'%'},lib:{},items:[],sel:null};
 try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-let tm,ver=0; localStorage.removeItem('pdb_key');
+
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
 const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
