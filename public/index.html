@@ -642,7 +642,7 @@ document.querySelectorAll('[data-enter-app]').forEach(button=>button.addEventLis
   document.body.classList.add('app-open');
   document.getElementById('welcome').setAttribute('hidden','');
   window.scrollTo({top:0,behavior:'instant'});
-  const first=document.querySelector('.menu-n button.on')||document.querySelector('.menu-n button[data-v="itens"]');
+  const first=document.querySelector('.menu-n button[data-v="dashboard"]');
   if(first)first.click();
 }));
 document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a').forEach(link=>link.addEventListener('click',()=>{
