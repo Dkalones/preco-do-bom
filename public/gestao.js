@@ -1,7 +1,7 @@
 /* Preço do Bom 2.0 — módulos de gestão */
 (()=>{'use strict';
 const g=()=>{S.gestao=S.gestao||{stock:{},movements:[],sales:[],suppliers:[],purchases:[],menuHidden:[]};let x=S.gestao;for(const k of ['stock','movements','sales','suppliers','purchases','menuHidden'])x[k]=x[k]||(k==='stock'?{}:[]);return x};
-const id=()=>Math.random().toString(36).slice(2)+Date.now().toString(36), money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}), esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])), today=()=>new Date().toISOString().slice(0,10), date=s=>new Date(s+'T12:00:00').toLocaleDateString('pt-BR');
+const id=()=>Math.random().toString(36).slice(2)+Date.now().toString(36), money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}), today=()=>new Date().toISOString().slice(0,10), date=s=>new Date(s+'T12:00:00').toLocaleDateString('pt-BR');
 const units={g:['m',1],kg:['m',1000],ml:['v',1],L:['v',1000],un:['u',1]}, conv=(q,a,b)=>units[a]&&units[b]&&units[a][0]===units[b][0]?q*units[a][1]/units[b][1]:NaN;
 const ins=()=>Object.entries(S.lib||{}).filter(x=>x[1]?.n), prods=()=>S.items||[], st=k=>g().stock[k]||(g().stock[k]={qty:0,min:0});
 const stat=(t,v)=>'<div class="gb-panel gb-stat"><span>'+t+'</span><strong>'+v+'</strong></div>', panel=(t,b)=>'<div class="gb-panel"><h2>'+t+'</h2>'+b+'</div>', empty=t=>'<div class="gb-empty">'+t+'</div>', table=(h,rows)=>'<div style="overflow:auto"><table class="gb-table"><thead><tr>'+h.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
