@@ -11,7 +11,6 @@ function sales(days){let d=new Date();d.setDate(d.getDate()-days+1);d.setHours(0
 function sum(a,k){return a.reduce((n,x)=>n+Number(x[k]||0),0)}
 function dashboard(){let a=sales(30),low=activeIns().filter(([k])=>st(k).qty<st(k).min),rev=sum(a,'total'),prof=sum(a,'profit'),daily=Array.from({length:7},(_,i)=>{let d=new Date();d.setDate(d.getDate()-6+i);let k=localKey(d);return{d:k,v:sum(g().sales.filter(x=>x.date===k),'total')}}),mx=Math.max(1,...daily.map(x=>x.v));
 const weak=prods().map(i=>({name:i.nome,margin:calc(i).mg})).filter(i=>Number.isFinite(i.margin)&&i.margin<Number(S.cfg.lucro||0)).sort((a,b)=>a.margin-b.margin).slice(0,3);
-const weak=prods().map(i=>({name:i.nome,margin:calc(i).mg})).filter(i=>Number.isFinite(i.margin)&&i.margin<Number(S.cfg.lucro||0)).sort((a,b)=>a.margin-b.margin).slice(0,3);
 const tips=[];
 if(low.length)tips.push('<div class="gb-menu-item"><span><b>Repor estoque</b><small class="gb-muted"> '+low.length+' insumo(s) abaixo do mínimo</small></span><button data-goto="estoque">Ver estoque</button></div>');
 if(weak.length)tips.push('<div class="gb-menu-item"><span><b>Revisar preços</b><small class="gb-muted"> '+weak.map(x=>esc(x.name)+' ('+Number(x.margin).toFixed(1)+'%)').join(', ')+'</small></span><button data-goto="inteligencia">Analisar</button></div>');
