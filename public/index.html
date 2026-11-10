@@ -8,9 +8,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root{--bg:#ffffff;--card:#fff;--ink:#1c2b33;--mut:#6b7b84;--line:#dde5e7;--soft:#f5f8f9;--pri:#0f9d7a;--pri2:#e0f5ef;--acc:#e8a317;--bad:#c0392b;--sh:0 1px 2px rgba(31,42,36,.06),0 8px 20px rgba(31,42,36,.05);--fd:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;--fb:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#FDF7E6;--card:#fffdf6;--ink:#183629;--mut:#718074;--line:#e8dfc9;--soft:#f7f0df;--pri:#018D3E;--pri2:#e5f1e4;--acc:#E71506;--bad:#c6281c;--sh:0 1px 2px rgba(31,42,36,.06),0 8px 20px rgba(31,42,36,.05);--fd:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;--fb:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121512;--card:#1b201c;--ink:#eef2ee;--mut:#9aa69d;--line:#2c352f;--soft:#161a17;--pri:#35d0aa;--pri2:#123a31;--acc:#f0b429;--bad:#ef6a5b;--sh:none}}
-:root[data-theme="dark"]{--bg:#121512;--card:#1b201c;--ink:#eef2ee;--mut:#9aa69d;--line:#2c352f;--soft:#161a17;--pri:#35d0aa;--pri2:#123a31;--acc:#f0b429;--bad:#ef6a5b;--sh:none}
+:root[data-theme="dark"]{--bg:#121812;--card:#1b241c;--ink:#f4f2e8;--mut:#a6b1a2;--line:#344336;--soft:#182019;--pri:#48b66c;--pri2:#203b27;--acc:#ef493c;--bad:#ef6a5b;--sh:none}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--fb)}
@@ -703,6 +703,42 @@ body.app-open .app{display:grid!important}
   .brand{flex:none;margin-top:auto;padding-top:8px}
   .content{min-width:0;box-sizing:border-box}
 }
+
+/* Identidade visual Preço do Bom — verde, creme e vermelho */
+.side{background:#123a27;color:#e8f0e5}
+.av{border-color:#018D3E;background:#1d5134}
+.menu-n button{color:#d8e8d9}
+.menu-n button.on{box-shadow:inset 3px 0 0 #018D3E}
+.menu-n button:hover{background:rgba(253,247,230,.09)}
+.brand span{color:#62bd7b}
+.mark{background:#018D3E}
+.res{background:linear-gradient(155deg,#075d2c,#018D3E);box-shadow:0 14px 34px rgba(1,91,42,.24)}
+#welcome{--w-ink:#183629;--w-muted:#718074;--w-green:#018D3E;--w-mint:#e5f1e4;--w-line:#e8dfc9;--w-paper:#FDF7E6;background:#FDF7E6;color:#183629}
+.welcome-nav,.welcome-footer{background:#fffdf6;border-color:#e8dfc9}
+.welcome-brand,.welcome-footer-brand{color:#183629}
+.welcome-brand b,.welcome-footer-brand b,.welcome-eyebrow,.welcome-section-head>span,.welcome-how>div>span,.welcome-bottom-cta>div>span{color:#018D3E}
+.welcome-mark,.welcome-proof-icon,.welcome-mini-icon,.welcome-float>span{background:#e5f1e4;color:#018D3E}
+.welcome-links a:hover,.welcome-secondary span,.welcome-window-top>span b,.welcome-metrics em,.welcome-steps>div>b{color:#018D3E}
+.welcome-primary{background:#018D3E;border-color:#018D3E;box-shadow:0 8px 20px rgba(1,141,62,.18)}
+.welcome-primary:hover{background:#016f32;box-shadow:0 12px 24px rgba(1,141,62,.24)}
+.welcome-login{border-color:#d8e5d4;background:#fffdf6;color:#176137}
+.welcome-login span{color:#018D3E}
+.welcome-glow{background:radial-gradient(ellipse,#c8e2c7 0%,#e5f1e4 45%,transparent 74%)}
+.welcome-window,.welcome-feature{background:#fffdf6;border-color:#e8dfc9}
+.welcome-window-top{background:#f8f1df;border-color:#e8dfc9}
+.welcome-metrics>div,.welcome-chart-card{background:#fffdf6;border-color:#e8dfc9}
+.welcome-preview-bottom>div{background:#f7f0df}
+.welcome-how{background:#edf2df}
+.welcome-steps>div{background:rgba(255,253,246,.82);border-color:#dce5ce}
+.welcome-feature:hover{border-color:#b8d3ad}
+.welcome-features{border-color:#e8dfc9}
+.welcome-footer{border-color:#e8dfc9}
+.welcome-proof b{color:#c6cbb9}
+.welcome-live i{background:#018D3E;box-shadow:0 0 0 4px rgba(1,141,62,.12)}
+/* Vermelho reservado para chamadas promocionais e alertas */
+.welcome-float>span{background:#fff0e9;color:#E71506}
+@media(prefers-reduced-motion:reduce){.welcome-primary,.welcome-feature{transition:none}}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
