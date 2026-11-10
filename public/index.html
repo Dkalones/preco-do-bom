@@ -676,6 +676,13 @@ body{min-width:320px}
  #welcome .welcome-menu-toggle span,#welcome .welcome-login span{transition:none}
 }
 
+
+/* Separação rígida entre apresentação e aplicação */
+#welcome[hidden]{display:none!important}
+body:not(.app-open) .app{display:none!important}
+body.app-open #welcome{display:none!important}
+body.app-open .app{display:grid!important}
+.app .view[hidden]{display:none!important}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1076,13 +1083,31 @@ renderList();renderEd();
 <script src="/gestao.js"></script>
 
 <script>
-document.querySelectorAll('[data-enter-app]').forEach(button=>button.addEventListener('click',()=>{
-  document.body.classList.add('app-open');
-  document.getElementById('welcome').setAttribute('hidden','');
-  window.scrollTo({top:0,behavior:'instant'});
-  const first=document.querySelector('.menu-n button[data-v="dashboard"]');
-  if(first)first.click();
-}));
+(() => {
+  const welcome=document.getElementById('welcome');
+  const app=document.querySelector('.app');
+  const dashboardButton=document.querySelector('.menu-n button[data-v="dashboard"]');
+
+  // Estado inicial: somente a página de apresentação fica visível.
+  document.body.classList.remove('app-open');
+  if(welcome)welcome.hidden=false;
+  document.querySelectorAll('.view').forEach(view=>{view.hidden=true;});
+
+  function enterApp(){
+    if(!welcome||!app)return;
+    welcome.hidden=true;
+    document.body.classList.add('app-open');
+    document.querySelectorAll('.view').forEach(view=>{
+      view.hidden=view.id!=='v-dashboard';
+    });
+    window.scrollTo({top:0,behavior:'instant'});
+    if(dashboardButton)dashboardButton.click();
+  }
+
+  document.querySelectorAll('[data-enter-app]').forEach(button=>{
+    button.addEventListener('click',enterApp);
+  });
+})();
 document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a').forEach(link=>link.addEventListener('click',()=>{
   const target=document.querySelector(link.getAttribute('href'));
   if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
