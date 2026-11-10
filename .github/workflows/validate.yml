@@ -1,0 +1,34 @@
+name: Validate Preco do Bom
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check management JavaScript
+        run: node --check public/gestao.js
+      - name: Check inline JavaScript in HTML
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const vm = require('node:vm');
+          const html = fs.readFileSync('public/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
+            .filter(match => !/\\bsrc\\s*=/.test(match[1]))
+            .map(match => match[2])
+            .filter(source => source.trim());
+          if (!scripts.length) throw new Error('Nenhum script inline encontrado.');
+          scripts.forEach((source, index) => new vm.Script(source, { filename: `index-inline-${index + 1}.js` }));
+          console.log(`Sintaxe válida em ${scripts.length} script(s) inline.`);
+          NODE
