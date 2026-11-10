@@ -613,6 +613,42 @@ body{min-width:320px}
  #welcome .welcome-window:hover,#welcome .welcome-primary:hover,#welcome .welcome-login:hover{transform:none}
 }
 
+
+/* Motion refinado: entrada, feedback e rolagem */
+#welcome .welcome-copy>*{animation:welcome-enter .65s cubic-bezier(.2,.75,.25,1) both}
+#welcome .welcome-copy .welcome-eyebrow{animation-delay:.04s}
+#welcome .welcome-copy h1{animation-delay:.11s}
+#welcome .welcome-copy>p{animation-delay:.18s}
+#welcome .welcome-benefits{animation-delay:.25s}
+#welcome .welcome-actions{animation-delay:.32s}
+#welcome .welcome-proof{animation-delay:.39s}
+#welcome .welcome-visual{animation:welcome-visual-in .9s cubic-bezier(.2,.75,.25,1) .12s both}
+#welcome .welcome-glow{animation:welcome-glow 7s ease-in-out infinite alternate}
+#welcome .welcome-window{transform-origin:50% 55%;transition:transform .35s cubic-bezier(.2,.75,.25,1),box-shadow .35s}
+#welcome .welcome-window:hover{transform:translateY(-5px) scale(1.008);box-shadow:0 35px 90px rgba(35,79,59,.17)}
+#welcome .welcome-float{animation:welcome-float 4.5s ease-in-out infinite}
+#welcome .welcome-live i{animation:welcome-pulse 2s ease-in-out infinite}
+#welcome .welcome-chart svg path:last-child{stroke-dasharray:900;stroke-dashoffset:900;animation:welcome-chart-draw 2.1s cubic-bezier(.35,.7,.25,1) .5s forwards}
+#welcome .welcome-metrics>div,#welcome .welcome-feature{transition:transform .25s,box-shadow .25s,border-color .25s}
+#welcome .welcome-metrics>div:hover,#welcome .welcome-feature:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(27,76,55,.09);border-color:#b9dfce}
+#welcome .welcome-links a{position:relative}
+#welcome .welcome-links a::after{content:"";position:absolute;left:17px;right:17px;bottom:4px;height:2px;border-radius:2px;background:#0b9870;transform:scaleX(0);transform-origin:left;transition:transform .22s}
+#welcome .welcome-links a:hover::after{transform:scaleX(1)}
+#welcome .welcome-primary{position:relative;overflow:hidden}
+#welcome .welcome-primary::after{content:"";position:absolute;inset:-40% auto -40% -55%;width:35%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:left .55s}
+#welcome .welcome-primary:hover::after{left:125%}
+#welcome .welcome-secondary span{display:inline-block;transition:transform .2s}
+#welcome .welcome-secondary:hover span{transform:translateY(4px)}
+#welcome .welcome-reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.75,.25,1)}
+#welcome .welcome-reveal.is-visible{opacity:1;transform:translateY(0)}
+@keyframes welcome-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes welcome-visual-in{from{opacity:0;transform:translateY(25px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes welcome-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes welcome-pulse{0%,100%{box-shadow:0 0 0 0 rgba(32,174,136,.28)}50%{box-shadow:0 0 0 6px rgba(32,174,136,0)}}
+@keyframes welcome-chart-draw{to{stroke-dashoffset:0}}
+@keyframes welcome-glow{from{opacity:.45;transform:scale(.96)}to{opacity:.85;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){#welcome *,#welcome *::before,#welcome *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}#welcome .welcome-reveal{opacity:1;transform:none}}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1024,5 +1060,32 @@ document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a
 }));
 </script>
 
+<script>
+(() => {
+ const root=document.getElementById('welcome');
+ if(!root||root.dataset.motionReady==='1')return;
+ root.dataset.motionReady='1';
+ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const targets=root.querySelectorAll('.welcome-feature,.welcome-how,.welcome-bottom-cta,.welcome-footer');
+ if('IntersectionObserver'in window&&!reduce){
+  const observer=new IntersectionObserver((entries,instance)=>entries.forEach(entry=>{
+   if(entry.isIntersecting){entry.target.classList.add('welcome-reveal','is-visible');instance.unobserve(entry.target);}
+  }),{threshold:.12,rootMargin:'0px 0px -35px 0px'});
+  targets.forEach(el=>{el.classList.add('welcome-reveal');observer.observe(el);});
+ }
+ const visual=root.querySelector('.welcome-visual'),card=root.querySelector('.welcome-window');
+ if(visual&&card&&!reduce&&window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+  visual.addEventListener('pointermove',event=>{
+   const rect=visual.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width-.5,y=(event.clientY-rect.top)/rect.height-.5;
+   card.style.transform='perspective(1100px) rotateY('+(x*2.4).toFixed(2)+'deg) rotateX('+(-y*1.8).toFixed(2)+'deg) translateY(-2px)';
+  },{passive:true});
+  visual.addEventListener('pointerleave',()=>{card.style.transform='';},{passive:true});
+ }
+ root.querySelectorAll('a[href^="#welcome-"]').forEach(link=>link.addEventListener('click',event=>{
+  const target=root.querySelector(link.getAttribute('href'));
+  if(target){event.preventDefault();target.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+ }));
+})();
+</script>
 </body>
 </html>
