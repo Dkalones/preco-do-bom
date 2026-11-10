@@ -29,6 +29,6 @@ jobs:
             .map(match => match[2])
             .filter(source => source.trim());
           if (!scripts.length) throw new Error('Nenhum script inline encontrado.');
-          scripts.forEach((source, index) => new vm.Script(source, { filename: \`index-inline-\${index + 1}.js\` }));
-          console.log(\`Sintaxe válida em \${scripts.length} script(s) inline.\`);
+          scripts.forEach((source, index) => new vm.Script(source, { filename: 'index-inline-' + (index + 1) + '.js' }));
+          console.log('Sintaxe válida em ' + scripts.length + ' script(s) inline.');
           NODE
