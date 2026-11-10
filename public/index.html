@@ -683,6 +683,26 @@ body:not(.app-open) .app{display:none!important}
 body.app-open #welcome{display:none!important}
 body.app-open .app{display:grid!important}
 .app .view[hidden]{display:none!important}
+
+/* Ajuste final: a navegação lateral deve caber exatamente na altura da janela */
+@media(min-width:901px){
+  .app{min-height:100vh;min-height:100dvh;align-items:stretch}
+  .side{
+    box-sizing:border-box;
+    height:100vh;
+    height:100dvh;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-bottom:max(14px,env(safe-area-inset-bottom,0px));
+    scrollbar-width:thin;
+    scrollbar-color:#52636c transparent;
+  }
+  .menu-n{flex:1 0 auto;gap:1px}
+  .menu-n button{padding-block:9px;min-height:42px}
+  .brand{flex:none;margin-top:auto;padding-top:8px}
+  .content{min-width:0;box-sizing:border-box}
+}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
