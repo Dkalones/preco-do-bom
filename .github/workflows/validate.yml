@@ -24,11 +24,11 @@ jobs:
           const fs = require('node:fs');
           const vm = require('node:vm');
           const html = fs.readFileSync('public/index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
-            .filter(match => !/\\bsrc\\s*=/.test(match[1]))
+          const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+            .filter(match => !/\bsrc\s*=/.test(match[1]))
             .map(match => match[2])
             .filter(source => source.trim());
           if (!scripts.length) throw new Error('Nenhum script inline encontrado.');
-          scripts.forEach((source, index) => new vm.Script(source, { filename: `index-inline-${index + 1}.js` }));
-          console.log(`Sintaxe válida em ${scripts.length} script(s) inline.`);
+          scripts.forEach((source, index) => new vm.Script(source, { filename: \`index-inline-\${index + 1}.js\` }));
+          console.log(\`Sintaxe válida em \${scripts.length} script(s) inline.\`);
           NODE
