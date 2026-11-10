@@ -649,6 +649,33 @@ body{min-width:320px}
 @keyframes welcome-glow{from{opacity:.45;transform:scale(.96)}to{opacity:.85;transform:scale(1.05)}}
 @media(prefers-reduced-motion:reduce){#welcome *,#welcome *::before,#welcome *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}#welcome .welcome-reveal{opacity:1;transform:none}}
 
+
+/* Menu inicial orientado à descoberta e ação */
+#welcome .welcome-nav{position:sticky;top:0;isolation:isolate}
+#welcome .welcome-links{gap:4px;padding:5px;background:#f4f8f5;border:1px solid #e6eee8;box-shadow:inset 0 1px 2px rgba(20,60,43,.025)}
+#welcome .welcome-links a{position:relative;padding-inline:18px;color:#52695e;font-size:12px;font-weight:700}
+#welcome .welcome-links a[aria-current="location"]{background:#fff;color:#087d5e;box-shadow:0 2px 8px rgba(25,65,47,.08)}
+#welcome .welcome-links a[aria-current="location"]::after{content:"";position:absolute;left:18px;right:18px;bottom:3px;height:2px;border-radius:2px;background:#0b9870}
+#welcome .welcome-login{min-height:46px;padding-inline:19px;border-radius:12px;box-shadow:0 5px 14px rgba(8,125,94,.14)}
+#welcome .welcome-login span{display:inline-block;margin-left:7px;transition:transform .2s}
+#welcome .welcome-login:hover span{transform:translateX(4px)}
+#welcome .welcome-menu-toggle{display:none}
+@media(max-width:700px){
+ #welcome .welcome-nav{position:sticky;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:10px 16px}
+ #welcome .welcome-menu-toggle{display:flex;width:42px;height:42px;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-left:auto;border:1px solid #e3ece6;border-radius:11px;background:#fff;cursor:pointer}
+ #welcome .welcome-menu-toggle span{display:block;width:17px;height:2px;border-radius:2px;background:#17664e;transition:transform .2s,opacity .2s}
+ #welcome .welcome-menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(3.5px) rotate(45deg)}
+ #welcome .welcome-menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+ #welcome .welcome-login{min-height:42px;padding:0 12px;font-size:11px}
+ #welcome .welcome-links{display:none;order:3;flex:0 0 100%;width:100%;padding:7px;gap:5px;border-radius:14px;box-shadow:0 12px 26px rgba(22,65,45,.08)}
+ #welcome .welcome-links.is-open{display:flex;flex-direction:column;align-items:stretch}
+ #welcome .welcome-links a{justify-content:flex-start;min-height:43px;padding-inline:14px;border-radius:9px}
+ #welcome .welcome-links a[aria-current="location"]::after{left:auto;right:12px;bottom:12px;width:5px;height:5px;border-radius:50%}
+}
+@media(prefers-reduced-motion:reduce){
+ #welcome .welcome-menu-toggle span,#welcome .welcome-login span{transition:none}
+}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -664,7 +691,9 @@ body{min-width:320px}
     <nav class="welcome-links" aria-label="Navegação principal">
       <a href="#welcome-recursos">Recursos</a>
       <a href="#welcome-como">Como funciona</a>
-          </nav>
+      <a href="#welcome-sobre">Sobre</a>
+    </nav>
+    <button class="welcome-menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="welcome-mobile-links"><span></span><span></span></button>
     <button class="welcome-login" type="button" data-enter-app>Acessar painel <span>→</span></button>
   </header>
 
@@ -1086,6 +1115,36 @@ document.querySelectorAll('.welcome-links a,.welcome-secondary,.welcome-footer a
   if(target){event.preventDefault();target.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
  }));
 })();
+</script>
+<script>
+(() => {
+ const root=document.getElementById('welcome');
+ if(!root||root.dataset.navUxReady==='1')return;
+ root.dataset.navUxReady='1';
+ const nav=root.querySelector('.welcome-nav'),toggle=root.querySelector('.welcome-menu-toggle'),links=root.querySelector('.welcome-links');
+ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const closeMenu=()=>{if(!toggle||!links)return;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu');links.classList.remove('is-open');};
+ if(toggle&&links){
+  toggle.addEventListener('click',()=>{
+   const open=toggle.getAttribute('aria-expanded')!=='true';
+   toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+   links.classList.toggle('is-open',open);
+  });
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+  document.addEventListener('click',e=>{if(!nav.contains(e.target))closeMenu();});
+ }
+ const sections=['welcome-recursos','welcome-como','welcome-sobre'].map(id=>document.getElementById(id)).filter(Boolean);
+ const anchors=[...root.querySelectorAll('.welcome-links a')];
+ if('IntersectionObserver'in window){
+  const spy=new IntersectionObserver(entries=>{
+   const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+   if(!visible)return;
+   anchors.forEach(a=>{if(a.getAttribute('href')==='#'+visible.target.id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+  },{rootMargin:'-22% 0px -62% 0px',threshold:[0,.15,.4,.7]});
+  sections.forEach(s=>spy.observe(s));
+ }
+})();;
 </script>
 </body>
 </html>
