@@ -739,6 +739,73 @@ body.app-open .app{display:grid!important}
 .welcome-float>span{background:#fff0e9;color:#E71506}
 @media(prefers-reduced-motion:reduce){.welcome-primary,.welcome-feature{transition:none}}
 
+
+/* Home de conversão — hierarquia, clareza e ação */
+#welcome{overflow:hidden}
+.welcome-nav{backdrop-filter:blur(14px);background:rgba(255,253,246,.94)}
+.welcome-hero{min-height:650px;padding-top:88px;padding-bottom:86px;gap:clamp(34px,5vw,76px)}
+.welcome-copy{max-width:610px}
+.welcome-eyebrow{display:inline-flex;padding:9px 12px;border:1px solid #cfe3cf;border-radius:999px;background:#eaf3e5;color:#176b37;letter-spacing:1.1px}
+.welcome-eyebrow i{background:#018D3E;box-shadow:0 0 0 4px rgba(1,141,62,.12)}
+.welcome-copy h1{font-size:clamp(50px,5.7vw,78px);line-height:.99;letter-spacing:-4.2px;margin:24px 0 20px;max-width:620px}
+.welcome-copy h1 em{color:#018D3E;position:relative}
+.welcome-copy>p{font-size:17px;line-height:1.72;color:#526b5a;max-width:540px}
+.welcome-benefits{display:grid;gap:11px;margin:24px 0 0;padding:0;list-style:none}
+.welcome-benefits li{display:flex;align-items:flex-start;gap:10px;color:#294b36;font-size:14px;font-weight:600;line-height:1.45}
+.welcome-benefits li span{display:grid;place-items:center;flex:none;width:21px;height:21px;border-radius:7px;background:#018D3E;color:#fff;font-size:12px;font-weight:800}
+.welcome-actions{gap:20px;margin-top:30px}
+.welcome-primary{min-height:54px;padding:15px 21px;border-radius:13px;font-size:14px;box-shadow:0 10px 24px rgba(1,141,62,.22)}
+.welcome-primary span{margin-left:13px;transition:transform .2s}
+.welcome-primary:hover span{transform:translateX(4px)}
+.welcome-secondary{padding:12px 0}
+.welcome-proof{margin-top:24px;gap:9px;color:#718074;flex-wrap:wrap}
+.welcome-proof-icon{background:#018D3E;color:#fff;width:20px;height:20px}
+.welcome-visual{padding:30px 8px 35px 0}
+.welcome-window{border-radius:22px;box-shadow:0 34px 90px rgba(24,54,41,.16),0 8px 22px rgba(24,54,41,.07);transform:perspective(1400px) rotateY(-3deg) rotateX(1deg)}
+.welcome-window-top{height:50px}
+.welcome-window-body{padding:26px 27px 22px}
+.welcome-metrics>div{padding:15px;border-radius:13px;background:#fff}
+.welcome-metrics b{font-size:clamp(19px,2vw,25px)}
+.welcome-chart-card{border-radius:13px}
+.welcome-float{right:-8px;bottom:2px;border-radius:14px;box-shadow:0 16px 38px rgba(24,54,41,.15)}
+.welcome-features{padding-top:78px}
+.welcome-section-head h2{max-width:680px;margin-left:auto;margin-right:auto}
+.welcome-feature{border-radius:17px;padding:24px;box-shadow:0 4px 16px rgba(24,54,41,.035)}
+.welcome-feature-icon{background:#e5f1e4;color:#018D3E}
+.welcome-feature h3{color:#183629}
+.welcome-how{border:1px solid #dce7d4}
+.welcome-bottom-cta{padding:28px 30px 68px}
+.welcome-bottom-cta h2{max-width:620px}
+.welcome-bottom-cta .welcome-primary{white-space:nowrap}
+@media(max-width:1050px){
+ .welcome-hero{min-height:0;padding:65px 0 68px;grid-template-columns:1fr;gap:22px}
+ .welcome-copy{max-width:760px}
+ .welcome-visual{max-width:760px;padding:15px 8px 35px;margin:0 auto;width:100%}
+ .welcome-window{transform:none}
+}
+@media(max-width:700px){
+ .welcome-hero{padding:48px 0 52px;gap:12px}
+ .welcome-eyebrow{font-size:9px;letter-spacing:.8px;padding:8px 10px}
+ .welcome-copy h1{font-size:clamp(43px,12vw,58px);letter-spacing:-2.9px;line-height:1.02;margin:19px 0 16px}
+ .welcome-copy>p{font-size:14px;line-height:1.68}
+ .welcome-benefits{gap:9px;margin-top:19px}
+ .welcome-benefits li{font-size:12px}
+ .welcome-actions{align-items:stretch;gap:10px;margin-top:23px}
+ .welcome-primary{width:100%;justify-content:center;min-height:52px;padding:14px 12px}
+ .welcome-secondary{text-align:center;padding:9px}
+ .welcome-proof{margin-top:17px;font-size:10px;gap:7px}
+ .welcome-visual{padding:13px 0 28px}
+ .welcome-window-body{padding:15px 12px}
+ .welcome-metrics>div{padding:10px}
+ .welcome-metrics small{font-size:8px}
+ .welcome-metrics b{font-size:17px}
+ .welcome-float{right:2px;bottom:0}
+ .welcome-features{padding:48px 0}
+ .welcome-bottom-cta{padding:10px 0 48px}
+ .welcome-bottom-cta .welcome-primary{white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){.welcome-primary span{transition:none}}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -763,35 +830,35 @@ body.app-open .app{display:grid!important}
   <main id="inicio" class="welcome-main">
     <section class="welcome-hero">
       <div class="welcome-copy">
-        <div class="welcome-eyebrow"><i></i> MAIS CLAREZA PARA DECIDIR</div>
-        <h1>Saiba quanto custa. <em>Decida quanto cobrar.</em></h1>
-        <p>Tenha custos, preços de venda e estoque organizados em um só lugar. Entenda melhor quanto cada produto custa e tome decisões com mais segurança.</p>
+        <div class="welcome-eyebrow"><i></i> GESTÃO MAIS INTELIGENTE PARA O SEU NEGÓCIO</div>
+        <h1>Pare de definir preços no <em>chute.</em></h1>
+        <p>Descubra quanto cada produto realmente custa, saiba quanto cobrar e acompanhe o que acontece no seu negócio — tudo em um só painel.</p>
         <ul class="welcome-benefits" aria-label="O que você pode organizar">
-          <li><span aria-hidden="true">✓</span> Calcular custos e margens</li>
-          <li><span aria-hidden="true">✓</span> Definir preços de venda</li>
-          <li><span aria-hidden="true">✓</span> Acompanhar o estoque</li>
+          <li><span aria-hidden="true">✓</span> Enxergue custos e margens com clareza</li>
+          <li><span aria-hidden="true">✓</span> Encontre preços de venda mais conscientes</li>
+          <li><span aria-hidden="true">✓</span> Tenha estoque, vendas e financeiro organizados</li>
         </ul>
         <div class="welcome-actions">
-          <button class="welcome-primary" type="button" data-enter-app>Começar a organizar <span>→</span></button>
-          <a class="welcome-secondary" href="#welcome-recursos">Conhecer recursos <span>↓</span></a>
+          <button class="welcome-primary" type="button" data-enter-app>Quero organizar meu negócio <span>→</span></button>
+          <a class="welcome-secondary" href="#welcome-como">Ver como funciona <span>↓</span></a>
         </div>
-        <div class="welcome-proof"><span class="welcome-proof-icon">✓</span><span>Simples de usar</span><b>·</b><span>Feito para pequenos negócios</span></div>
+        <div class="welcome-proof"><span class="welcome-proof-icon">✓</span><span>Comece pelo essencial</span><b>·</b><span>Você mantém o controle das decisões</span></div>
       </div>
       <div class="welcome-visual" aria-label="Prévia ilustrativa do painel de gestão">
         <div class="welcome-glow"></div>
         <div class="welcome-window">
           <div class="welcome-window-top"><div class="welcome-dots"><i></i><i></i><i></i></div><span>PREÇO DO BOM <b>·</b> VISÃO GERAL</span><div class="welcome-live"><i></i> PAINEL</div></div>
           <div class="welcome-window-body">
-            <div class="welcome-preview-heading"><div><small>SEU NEGÓCIO, EM FOCO</small><h3>Visão geral</h3></div><span class="welcome-date">Últimos 30 dias</span></div>
+            <div class="welcome-preview-heading"><div><small>SEU NEGÓCIO, EM FOCO</small><h3>Visão geral</h3></div><span class="welcome-date">PRÉVIA ILUSTRATIVA</span></div>
             <div class="welcome-metrics">
-              <div><small>Faturamento</small><b>R$ 8.420</b><em>↗ Acompanhe suas vendas</em></div>
-              <div><small>Lucro estimado</small><b>R$ 2.360</b><em>↗ Veja sua rentabilidade</em></div>
+              <div><small>Vendas registradas · exemplo</small><b>R$ 8.420</b><em>↗ Acompanhe suas entradas</em></div>
+              <div><small>Resultado · exemplo</small><b>R$ 2.360</b><em>↗ Entenda sua rentabilidade</em></div>
             </div>
             <div class="welcome-chart-card"><div class="welcome-chart-title"><span>Desempenho do negócio</span><small>Exemplo ilustrativo</small></div><div class="welcome-chart"><div class="welcome-chart-y"><i>8k</i><i>6k</i><i>4k</i><i>2k</i></div><div class="welcome-chart-plot"><div class="welcome-gridline"></div><div class="welcome-gridline"></div><div class="welcome-gridline"></div><svg viewBox="0 0 440 140" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="welcomeArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#36c49d" stop-opacity=".27"/><stop offset="1" stop-color="#36c49d" stop-opacity="0"/></linearGradient></defs><path d="M0 112 C35 103 42 91 76 96 S124 69 158 82 S205 46 236 61 S285 37 315 49 S363 22 390 33 S420 13 440 17 V140 H0Z" fill="url(#welcomeArea)"/><path d="M0 112 C35 103 42 91 76 96 S124 69 158 82 S205 46 236 61 S285 37 315 49 S363 22 390 33 S420 13 440 17" fill="none" stroke="#20ae88" stroke-width="3" stroke-linecap="round"/></svg><div class="welcome-chart-x"><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span></div></div></div></div>
             <div class="welcome-preview-bottom"><div><span class="welcome-mini-icon">◇</span><span><b>Precificação</b><small>Custos e margens sob controle</small></span></div><div><span class="welcome-mini-icon">▤</span><span><b>Estoque</b><small>Insumos e movimentações</small></span></div><div><span class="welcome-mini-icon">↗</span><span><b>Relatórios</b><small>Decisões com informação</small></span></div></div>
           </div>
         </div>
-        <div class="welcome-float"><span>✦</span><div><b>Mais clareza.</b><small>Melhores decisões.</small></div></div>
+        <div class="welcome-float"><span>✦</span><div><b>Menos achismo.</b><small>Mais controle no dia a dia.</small></div></div>
       </div>
     </section>
 
