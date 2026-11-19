@@ -1072,7 +1072,7 @@ function renderEd(){
     <div class="g2"><div><label>Nome do produto/prato</label><input data-f="nome" value="${esc(it.nome)}" placeholder="Ex.: Coxinha tradicional"></div>
     <div><label>Categoria ${tip('Para agrupar seus itens (Lanches, Bebidas, Sobremesas...). Opcional.')}</label><input data-f="cat" value="${esc(it.cat)}" placeholder="Ex.: Lanches"></div></div>
     <div class="g2" style="margin-top:10px"><div><label>Rendimento (quantas porções/unidades a receita faz) ${tip('Quantas unidades ou porções a receita inteira produz. Ex.: uma receita que rende 10 fatias = 10.')}</label><input type="number" min="1" data-f="rend" value="${it.rend}"></div>
-    <div><label>Embalagem/outros custos da receita (R$) ${tip('Custo de embalagem, sacolas, etiquetas e outros itens usados na receita inteira.')}</label><input type="number" min="0" step="0.01" data-f="emb" value="${it.emb}"></div></div>
+    <div><label>Embalagem/outros custos do lote (R$) ${tip('Custo total de caixas, sacolas, etiquetas e descartáveis usados neste lote.')}</label><input type="number" min="0" step="0.01" data-f="emb" value="${it.emb}"></div><div><label>Unidades por porção/caixa ${tip('Quantas unidades o cliente recebe em uma porção ou embalagem. Ex.: caixa com 10 coxinhas.')}</label><input type="number" min="1" step="1" data-f="porcao" value="${it.porcao||1}"></div></div>
     <div class="g2" style="margin-top:10px"><div><label>Mão de obra do lote (R$) ${tip('Custo do tempo de quem prepara o lote inteiro. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="mo" value="${it.mo||0}"></div><div><label>Gás, água e energia do lote (R$) ${tip('Consumo total durante o lote. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="gas" value="${it.gas||0}"></div><div><label>Máquina e manutenção do lote (R$) ${tip('Depreciação e manutenção proporcionais ao tempo de uso. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="maquina" value="${it.maquina||0}"></div></div></div></div>
   <div class="card"><h2>Ingredientes / insumos</h2>
     <datalist id="dl">${Object.values(S.lib).map(l=>`<option value="${esc(l.n)}">`).join('')}</datalist>${it.ings.map(rowHtml).join('')}
@@ -1082,7 +1082,7 @@ function renderEd(){
     <div class="sub">Preço de venda sugerido (por unidade)</div>
     <div class="big" id="r-sug"></div>
     <div style="margin:12px 0"><div class="row"><span>Custo dos ingredientes</span><b id="r-ing"></b></div>
-    <div class="row"><span>Custo por unidade ${tip('Custo total da receita dividido pelo rendimento.')}</span><b id="r-un"></b></div>
+    <div class="row"><span>Custo total do lote</span><b id="r-lote"></b></div><div class="row"><span>Custo por unidade ${tip('Custo total da receita dividido pelo rendimento.')}</span><b id="r-un"></b></div><div class="row"><span>Preço sugerido por porção/caixa</span><b id="r-porcao"></b></div><div class="row"><span>Lucro estimado por porção/caixa</span><b id="r-lucporcao"></b></div><div class="row"><span>Preço sugerido para vender o lote inteiro</span><b id="r-lotevenda"></b></div><div class="row"><span>Lucro estimado no lote inteiro</span><b id="r-lotelucro"></b></div>
     <div class="row"><span>CMV (custo ÷ preço) ${tip('Custo da Mercadoria Vendida: quanto do preço vai para pagar o custo. Quanto menor, melhor.')}</span><b id="r-cmv"></b></div>
     <div class="row"><span>Lucro por unidade ${tip('O que sobra para você em cada venda, depois de custo, despesas, impostos e taxas.')}</span><b id="r-luc"></b></div>
     <div class="row"><span>Margem real de lucro ${tip('Lucro dividido pelo preço de venda, em %.')}</span><b id="r-mg"></b></div><div class="row" id="r-dvrow"><span>Preço no delivery/app ${tip('Preço sugerido para vender em apps, já considerando a comissão.')}</span><b id="r-dv"></b></div><div class="row" id="r-pdrow"><span>Preço com desconto sazonal</span><b id="r-pd"></b></div><div class="row" id="r-ldrow"><span>Lucro com desconto</span><b id="r-ld"></b></div></div>
@@ -1095,7 +1095,7 @@ function renderEd(){
 function refresh(){
   const it=cur();if(!it)return;const c=calc(it);
   const set=(i,v)=>{const e=$('#'+i);if(e)e.textContent=v};
-  set('r-sug',brl(c.sug));set('r-ing',brl(c.ing));set('r-un',brl(c.un));set('r-cmv',pc(c.cmv));set('r-luc',brl(c.luc));set('r-mg',pc(c.mg));set('r-dv',brl(c.sugD));
+  const q=Math.max(1,Math.floor(num(it.porcao)||1)),rend=Math.max(1,num(it.rend)||1);set('r-sug',brl(c.sug));set('r-ing',brl(c.ing));set('r-lote',brl(c.total));set('r-un',brl(c.un));set('r-porcao',brl(c.sug*q));set('r-lucporcao',brl(c.luc*q));set('r-lotevenda',brl(c.sug*rend));set('r-lotelucro',brl(c.luc*rend));set('r-cmv',pc(c.cmv));set('r-luc',brl(c.luc));set('r-mg',pc(c.mg));set('r-dv',brl(c.sugD));
   const dsc=num(S.cfg.desc)>0;['r-pdrow','r-ldrow'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=dsc?'flex':'none'});
   set('r-pd',brl(c.pd));set('r-ld',brl(c.lucD)+' ('+pc(c.pd>0?c.lucD/c.pd*100:NaN)+')');const ld=$('#r-ld');if(ld)ld.className=c.lucD<0?'warn':'';
   document.querySelectorAll('.tier').forEach(r=>{const t=it.tiers[+r.dataset.ti],q=num(t.q),pp=c.ad*(1-num(t.d)/100),l=pp-c.un-pp*c.tx/100,e=r.querySelector('.tl');r.querySelector('.tp').textContent=brl(pp);e.textContent=brl(l);e.className='tl'+(l<0?' warn':'');r.querySelector('.tt').textContent=brl(pp*q)});const dr=$('#r-dvrow');if(dr)dr.style.display=num(S.cfg.deliv)>0?'flex':'none';
@@ -1107,7 +1107,7 @@ function refresh(){
   else m.textContent='Preço ideal para cobrir custos, despesas, taxas e ainda lucrar '+pc(num(S.cfg.lucro))+'.';
   renderList();save();
 }
-function rows(){return S.items.map(it=>{const c=calc(it);return{Item:it.nome,Categoria:it.cat,Rendimento:num(it.rend),'Custo/un (R$)':+c.un.toFixed(2),'Preço sugerido (R$)':+(c.sug||0).toFixed(2),'Preço delivery (R$)':+(c.sugD||0).toFixed(2),'Preço adotado (R$)':+(c.ad||0).toFixed(2),'Preço c/ desc. sazonal (R$)':+(c.pd||0).toFixed(2),'Lucro/un (R$)':+(c.luc||0).toFixed(2),'Margem (%)':+(c.mg||0).toFixed(1),'CMV (%)':+(c.cmv||0).toFixed(1)}})}
+function rows(){return S.items.map(it=>{const c=calc(it);return{Item:it.nome,Categoria:it.cat,Rendimento:num(it.rend),'Unidades/porção':num(it.porcao)||1,'Custo do lote (R$)':+c.total.toFixed(2),'Custo/un (R$)':+c.un.toFixed(2),'Preço sugerido/porção (R$)':+((c.sug||0)*(num(it.porcao)||1)).toFixed(2),'Lucro/porção (R$)':+((c.luc||0)*(num(it.porcao)||1)).toFixed(2),'Preço sugerido (R$)':+(c.sug||0).toFixed(2),'Preço delivery (R$)':+(c.sugD||0).toFixed(2),'Preço adotado (R$)':+(c.ad||0).toFixed(2),'Preço c/ desc. sazonal (R$)':+(c.pd||0).toFixed(2),'Lucro/un (R$)':+(c.luc||0).toFixed(2),'Margem (%)':+(c.mg||0).toFixed(1),'CMV (%)':+(c.cmv||0).toFixed(1)}})}
 async function out(name,data){
   const d=await claude.use('downloads');
   if(!d){toast('Download indisponível nesta visualização');return}
@@ -1143,7 +1143,7 @@ $('#exp').onclick=e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k
   try{const [ext,data,nm]=EXP[k]();out((nm||stamp())+ext,data)}catch(err){toast('Erro ao gerar '+k+'. Tente novamente.')}};
 ['fixo','imp','lucro','deliv','cartao','desc'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]??0;e.oninput=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
 ['fm','dm'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]||'%';e.onchange=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
-$('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',rend:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
+$('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',rend:1,porcao:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
 $('#list').onclick=e=>{const d=e.target.closest('[data-id]');if(d){S.sel=d.dataset.id;renderList();renderEd();$('#ed').scrollIntoView({behavior:'smooth'})}};
 $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
   if(t.dataset.f)it[t.dataset.f]=t.value;
@@ -1193,8 +1193,8 @@ function demo(){
  L('Doce de leite',14,0.4,'kg');L('Açúcar',4.5,1,'kg');L('Canela em pó',5,0.05,'kg');L('Óleo',8,0.9,'l');
  const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
  const id='i'+Date.now();
- const coxinha={id:id+'c',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
- const churros={id:id+'m',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
+ const coxinha={id:id+'c',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
+ const churros={id:id+'m',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,porcao:20,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
  S.items.push(coxinha,churros);S.sel=coxinha.id;show('itens');renderList();renderEd();save()
 }
 function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
