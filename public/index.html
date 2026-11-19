@@ -1078,7 +1078,7 @@ $('#alerts').innerHTML=A.length?`<div class="alert"><b>⚠ ${A.length>1?A.length
 function kpis(){const a=S.items.map(i=>calc(i)).filter(c=>isFinite(c.ad)&&c.ad>0),av=f=>a.length?a.reduce((x,c)=>x+f(c),0)/a.length:NaN;
 $('#kpis').innerHTML=[['Itens cadastrados',S.items.length],['Preço médio',brl(av(c=>c.ad))],['Margem média',pc(av(c=>c.mg))],['Insumos salvos',Object.keys(S.lib).length]].map(([l,v])=>`<div class="kpi"><span>${l}</span><b>${v}</b></div>`).join('')}
 function renderList(){kpis();renderAlerts();
-  $('#list').innerHTML=S.items.length?S.items.map(it=>{const c=calc(it),loss=c.luc<-.005;return `<div class="item ${it.id===S.sel?'on':''} ${loss?'is-loss':''}" data-id="${it.id}"><div><b>${esc(it.nome)||'Sem nome'}</b><small>${esc(it.cat)||'Sem categoria'}</small></div><div class="pr">${brl(c.ad)}${loss?'<em class="loss-tag">PREJUÍZO '+brl(Math.abs(c.luc))+'/un.</em>':'<em class="'+(c.mg<num(S.cfg.lucro)?'low':'ok')+'">'+pc(c.mg)+' de margem</em>'}</div></div>`}).join(''):'<p class="tip">Nenhum item ainda.</p>';
+  $('#list').innerHTML=S.items.length?S.items.map(it=>{const c=calc(it),loss=c.luc<-.005;return `<div class="item ${it.id===S.sel?'on':''} ${loss?'is-loss':''}" data-id="${it.id}"><div><b>${esc(it.nome)||'Sem nome'}</b><small>${esc(it.cat)||'Sem categoria'}</small></div><div class="pr">${brl(c.ad)}${loss?'<em class="loss-tag">PREJUÍZO '+brl(Math.abs(c.luc))+'/un.</em>':'<em class="'+(c.mg<num(S.cfg.lucro)-0.05?'low':'ok')+'">'+pc(c.mg)+' de margem</em>'}</div></div>`}).join(''):'<p class="tip">Nenhum item ainda.</p>';
 }
 function renderEd(){
   const it=cur();
