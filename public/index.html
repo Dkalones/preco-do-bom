@@ -53,7 +53,10 @@ button.x{color:var(--bad);padding:8px 10px;border-color:transparent;background:n
 .rc{padding:9px 0;font-weight:700}
 .tier{display:grid;grid-template-columns:repeat(5,1fr) 32px;gap:8px;align-items:end;margin-bottom:10px}.tier b{display:block;padding:9px 0}
 @media(max-width:600px){.tier{grid-template-columns:repeat(3,1fr)}}
-.res{background:linear-gradient(160deg,#0a6a54,#0f9d7a);color:#fff;border-radius:18px;padding:20px;box-shadow:0 14px 34px rgba(10,106,84,.3)}
+.res{background:linear-gradient(160deg,#0a6a54,#0f9d7a);color:#fff;border-radius:18px;padding:18px;box-shadow:0 14px 34px rgba(10,106,84,.3)}
+.res .mode-select{width:100%;margin:8px 0 10px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:9px;font:600 13px var(--fb)}
+.res .mode-select option{color:#173b2e;background:#fff}.res .big{font-size:38px;margin:4px 0 12px}.res .row{font-size:13px;padding:6px 0}
+.res details{border-top:1px solid rgba(255,255,255,.18);margin-top:8px;padding-top:8px}.res details summary{cursor:pointer;font-weight:700;font-size:13px;padding:4px 0}.res details .row:first-of-type{margin-top:4px}
 .res h2{color:#fff}.res .sub{font-size:13px;color:rgba(255,255,255,.75)}
 .big{font:800 42px var(--fd);letter-spacing:-1.5px;line-height:1.1;margin-bottom:4px}
 .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:14px}.row:last-child{border:0}
@@ -1014,6 +1017,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const num=v=>parseFloat(String(v).replace(',','.'))||0;
 let S={cfg:{fixo:15,imp:8,lucro:20,deliv:0,cartao:2.9,desc:0,fm:'%',dm:'%'},lib:{},items:[],sel:null};
 try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const legacyCount=S.items.length;S.items=S.items.filter(it=>(it.nome||'').trim().toLowerCase()!=='x-burguer');if(S.items.length!==legacyCount&&!S.items.some(it=>it.id===S.sel))S.sel=S.items[0]?.id||null;
 
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
@@ -1078,14 +1082,14 @@ function renderEd(){
     <datalist id="dl">${Object.values(S.lib).map(l=>`<option value="${esc(l.n)}">`).join('')}</datalist>${it.ings.map(rowHtml).join('')}
     <button id="addIng">+ Adicionar ingrediente</button>
     <p class="tip">⚡ Automático: ingrediente já usado antes preenche o preço sozinho, e ao mudar o preço ele atualiza em todos os itens. Compre em kg e use em g — a conversão é feita sozinha. <b>Perda %</b> = casca, osso, aparas.</p></div>
-  <div class="res"><h2>Resultado</h2>
-    <div class="sub">Preço de venda sugerido (por unidade)</div>
+  <div class="res"><h2>Precificação</h2>
+    <div class="sub">Visualizar preço em</div>
+    <select class="mode-select" data-f="priceMode" aria-label="Unidade de precificação"><option value="unidade" ${it.priceMode==='unidade'?'selected':''}>Unidade individual</option><option value="porcao" ${(it.priceMode||(num(it.porcao)>1?'porcao':'unidade'))==='porcao'?'selected':''}>Porção / caixa</option><option value="lote" ${it.priceMode==='lote'?'selected':''}>Lote completo</option></select>
+    <div class="sub" id="r-mode-label">Preço sugerido</div>
     <div class="big" id="r-sug"></div>
     <div style="margin:12px 0"><div class="row"><span>Custo dos ingredientes</span><b id="r-ing"></b></div>
     <div class="row"><span>Custo total do lote</span><b id="r-lote"></b></div><div class="row"><span>Custo por unidade ${tip('Custo total da receita dividido pelo rendimento.')}</span><b id="r-un"></b></div><div class="row"><span>Preço sugerido por porção/caixa</span><b id="r-porcao"></b></div><div class="row"><span>Lucro estimado por porção/caixa (preço adotado)</span><b id="r-lucporcao"></b></div><div class="row"><span>Preço sugerido para vender o lote inteiro</span><b id="r-lotevenda"></b></div><div class="row"><span>Lucro estimado no lote inteiro (preço adotado)</span><b id="r-lotelucro"></b></div>
-    <div class="row"><span>CMV (custo ÷ preço) ${tip('Custo da Mercadoria Vendida: quanto do preço vai para pagar o custo. Quanto menor, melhor.')}</span><b id="r-cmv"></b></div>
-    <div class="row"><span>Lucro por unidade ${tip('O que sobra para você em cada venda, depois de custo, despesas, impostos e taxas.')}</span><b id="r-luc"></b></div>
-    <div class="row"><span>Margem real de lucro ${tip('Lucro dividido pelo preço de venda, em %.')}</span><b id="r-mg"></b></div><div class="row" id="r-dvrow"><span>Preço no delivery/app ${tip('Preço sugerido para vender em apps, já considerando a comissão.')}</span><b id="r-dv"></b></div><div class="row" id="r-pdrow"><span>Preço com desconto sazonal</span><b id="r-pd"></b></div><div class="row" id="r-ldrow"><span>Lucro com desconto</span><b id="r-ld"></b></div></div>
+    <details><summary>Indicadores de rentabilidade</summary><div class="row"><span>CMV (custo ÷ preço)</span><b id="r-cmv"></b></div><div class="row"><span>Lucro por unidade</span><b id="r-luc"></b></div><div class="row"><span>Margem real de lucro</span><b id="r-mg"></b></div><div class="row" id="r-dvrow"><span>Preço no delivery/app</span><b id="r-dv"></b></div><div class="row" id="r-pdrow"><span>Preço com desconto sazonal</span><b id="r-pd"></b></div><div class="row" id="r-ldrow"><span>Lucro com desconto</span><b id="r-ld"></b></div></details></div>
     <label>Quero cobrar (R$) — opcional, para simular seu preço ${tip('Digite o preço que você pratica hoje. O site avisa na tela Produtos quando os custos subirem e esse preço deixar de dar a margem desejada.')}</label>
     <input type="number" min="0" step="0.01" data-f="final" value="${it.final||''}" placeholder="Deixe vazio para usar o sugerido">
     <div class="ex" style="margin-top:8px"><button data-act="r90">Arredondar p/ ,90</button><button data-act="rint">Arredondar p/ inteiro</button><button data-act="rsug">Usar sugerido</button></div><div id="r-msg" class="tip"></div></div>
@@ -1095,7 +1099,7 @@ function renderEd(){
 function refresh(){
   const it=cur();if(!it)return;const c=calc(it);
   const set=(i,v)=>{const e=$('#'+i);if(e)e.textContent=v};
-  const q=Math.max(1,Math.floor(num(it.porcao)||1)),rend=Math.max(1,num(it.rend)||1);set('r-sug',brl(c.sug));set('r-ing',brl(c.ing));set('r-lote',brl(c.un*rend));set('r-un',brl(c.un));set('r-porcao',brl(c.sug*q));set('r-lucporcao',brl(c.luc*q));set('r-lotevenda',brl(c.sug*rend));set('r-lotelucro',brl(c.luc*rend));set('r-cmv',pc(c.cmv));set('r-luc',brl(c.luc));set('r-mg',pc(c.mg));set('r-dv',brl(c.sugD));
+  const q=Math.max(1,Math.floor(num(it.porcao)||1)),rend=Math.max(1,num(it.rend)||1),mode=it.priceMode||(q>1?'porcao':'unidade'),modeLabel=$('#r-mode-label');if(modeLabel)modeLabel.textContent=mode==='lote'?'Preço sugerido para o lote completo':mode==='porcao'?'Preço sugerido por porção / caixa':'Preço sugerido por unidade';const mainPrice=mode==='lote'?c.sug*rend:mode==='porcao'?c.sug*q:c.sug;set('r-sug',brl(mainPrice));set('r-ing',brl(c.ing));set('r-lote',brl(c.un*rend));set('r-un',brl(c.un));set('r-porcao',brl(c.sug*q));set('r-lucporcao',brl(c.luc*q));set('r-lotevenda',brl(c.sug*rend));set('r-lotelucro',brl(c.luc*rend));set('r-cmv',pc(c.cmv));set('r-luc',brl(c.luc));set('r-mg',pc(c.mg));set('r-dv',brl(c.sugD));
   const dsc=num(S.cfg.desc)>0;['r-pdrow','r-ldrow'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=dsc?'flex':'none'});
   set('r-pd',brl(c.pd));set('r-ld',brl(c.lucD)+' ('+pc(c.pd>0?c.lucD/c.pd*100:NaN)+')');const ld=$('#r-ld');if(ld)ld.className=c.lucD<0?'warn':'';
   document.querySelectorAll('.tier').forEach(r=>{const t=it.tiers[+r.dataset.ti],q=num(t.q),pp=c.ad*(1-num(t.d)/100),l=pp-c.un-pp*c.tx/100,e=r.querySelector('.tl');r.querySelector('.tp').textContent=brl(pp);e.textContent=brl(l);e.className='tl'+(l<0?' warn':'');r.querySelector('.tt').textContent=brl(pp*q)});const dr=$('#r-dvrow');if(dr)dr.style.display=num(S.cfg.deliv)>0?'flex':'none';
@@ -1193,9 +1197,9 @@ function demo(){
  L('Doce de leite',14,0.4,'kg');L('Açúcar',4.5,1,'kg');L('Canela em pó',5,0.05,'kg');L('Óleo',8,0.9,'l');
  const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
  const id='i'+Date.now();
- const coxinha={id:id+'c',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
- const churros={id:id+'m',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,porcao:20,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
- S.items.push(coxinha,churros);S.sel=coxinha.id;show('itens');renderList();renderEd();save()
+ const coxinha={id:id+'c',priceMode:'porcao',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
+ const churros={id:id+'m',priceMode:'porcao',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,porcao:20,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
+ S.items=S.items.filter(it=>!['x-burguer','coxinha tradicional (lote de 100 un.)','mini churros com doce de leite (lote de 200 un.)'].includes((it.nome||'').trim().toLowerCase()));S.items.push(coxinha,churros);S.sel=coxinha.id;show('itens');renderList();renderEd();save()
 }
 function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
 $('#nome').value=S.cfg.nome||'';$('#nome').oninput=e=>{S.cfg.nome=e.target.value;biz();save()};biz();
