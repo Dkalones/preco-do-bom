@@ -891,6 +891,7 @@ body.app-open .app{display:grid!important}
     <button data-v="dashboard"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 4 3 6-7"/></svg><span>Visão geral</span></button>
     <button data-v="itens" class="on"><svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Produtos</span></button>
     <button data-v="insumos"><svg viewBox="0 0 24 24"><path d="M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6"/></svg><span>Insumos</span></button>
+    <button data-v="custos"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16V8m6 8V4m6 12v-5"/><circle cx="6" cy="6" r="2"/><circle cx="12" cy="3" r="1"/><circle cx="18" cy="9" r="2"/></svg><span>Custos</span></button>
     <button data-v="config"><svg viewBox="0 0 24 24"><path d="M4 6h10M20 6h0M4 12h4M14 12h6M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Ajustes</span></button>
     <button data-v="export"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg><span>Exportar</span></button>
     <button data-v="estoque"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7M12 11v10"/></svg><span>Estoque</span></button>
@@ -961,18 +962,28 @@ body.app-open .app{display:grid!important}
       <p class="tip">Custos operacionais: % do preço de venda (aluguel, luz, salários ÷ faturamento) ou valor fixo em R$ por unidade. O desconto sazonal mostra o preço promocional e se ainda sobra lucro.</p>
     </div></div></div>
   </section>
+  <section class="view" id="v-custos" hidden>
+    <div class="ph"><div><h1>Custos de produção</h1><p class="sub2">Calcule quanto cada lote consome de gás, energia, água, mão de obra e máquina. Aplique o resultado diretamente ao produto selecionado.</p></div></div>
+    <div class="card"><h2>Como usar nesta operação</h2><p class="tip" style="margin:0">Cadastre cada tamanho e sabor como produto separado. Em Produtos, informe o rendimento real do lote em unidades; lance massa, recheio, óleo de fritura consumido, açúcar, canela, coberturas, molhos e embalagens como ingredientes. Meça o tempo de produção do lote e use as calculadoras abaixo. A máquina deve ser contabilizada pelo tempo efetivo de uso.</p></div>
+    <div class="calcs" id="calcs"></div>
+    <div class="card" style="margin-top:16px"><h2>Conferência antes de fechar o preço</h2><div class="gl">
+      <div><b>Ingredientes</b><p class="tip">Massa, recheios, óleo de fritura, açúcar, canela, coberturas, molhos e descartáveis.</p></div>
+      <div><b>Rendimento e perdas</b><p class="tip">Conte unidades boas por lote. Inclua unidades quebradas, descarte e sobra não reaproveitável como perda.</p></div>
+      <div><b>Máquina</b><p class="tip">Considere depreciação, manutenção e tempo ligado. Calcule energia separadamente para não duplicar o consumo.</p></div>
+      <div><b>Venda</b><p class="tip">Inclua embalagem, guardanapo, palito, taxas de cartão, impostos e comissão de aplicativo quando houver.</p></div>
+    </div></div>
+  </section>
   <section class="view" id="v-tutorial" hidden>
     <div class="ph"><div><h1>Tutorial</h1><p class="sub2">Aprenda a precificar em 6 passos simples. Leva uns 5 minutos.</p></div><button class="p" data-go="itens">Começar agora</button></div>
     <ol class="steps">
       <li><div><b>Informe os percentuais do seu negócio</b><p>Em Ajustes, preencha lucro desejado, imposto, taxa de cartão e custos operacionais. Passe o mouse no <span class="inf" tabindex="0" data-tip="Este é o ícone de ajuda. Em todo o site, passe o mouse (ou toque) nele para ver uma explicação.">i</span> ao lado de cada campo para saber o que colocar.</p></div><button data-go="config">Ir para Ajustes</button></li>
       <li><div><b>Crie um item</b><p>Em Produtos, clique em <b style="display:inline">+ Novo item</b> e dê um nome ao produto ou prato. Em Rendimento, diga quantas porções a receita inteira produz.</p></div><button data-go="itens">Ir para Produtos</button></li>
       <li><div><b>Adicione os ingredientes</b><p>Para cada ingrediente, informe o preço pago, a quantidade comprada e a quantidade usada na receita. Pode comprar em kg e usar em g, a conversão é automática. Na segunda vez que usar o mesmo ingrediente, o preço já vem preenchido.</p></div></li>
-      <li><div><b>Inclua os outros custos</b><p>Embalagem, mão de obra e gás, água e energia da receita inteira. Não sabe quanto colocar? Use as calculadoras logo abaixo. Se tiver perda no preparo (casca, osso), preencha o campo Perda %.</p></div></li>
+      <li><div><b>Inclua os outros custos</b><p>Embalagem, mão de obra e gás, água e energia da receita inteira. Não sabe quanto colocar? Abra Custos no menu para calcular cada despesa e aplicar o valor ao produto. Registre perdas de produção e fritura no campo Perda %.</p></div></li>
       <li><div><b>Veja o preço ideal</b><p>O cartão verde mostra o preço sugerido, o lucro e a margem. Já cobra um preço? Digite em Quero cobrar: se os insumos subirem e a margem cair, o site avisa em Produtos e sugere o novo preço. Use os botões de arredondar para chegar a valores como R$ 23,90.</p></div></li>
       <li><div><b>Exporte e use</b><p>Em Exportar, baixe a tabela em Excel, PDF, CSV, JSON ou texto, além da ficha técnica (uma página por item) e do cardápio em PDF com seu nome e logo. Para vender em quantidade, configure os níveis de desconto de lote no fim de cada item.</p></div><button data-go="export">Ir para Exportar</button></li>
     </ol>
     <div class="ph" style="margin:28px 0 12px"><div><h2 style="font-size:19px;margin:0">Como calcular gás, água, energia e mão de obra</h2><p class="sub2">Troque os números de exemplo pelos do seu negócio. O resultado aparece na hora; depois é só colocar no campo indicado do item.</p></div></div>
-    <div class="calcs" id="calcs"></div>
     <div class="card" style="margin-top:16px"><h2>Como o site calcula o preço de venda</h2>
       <p style="margin:0 0 8px"><b>Preço = custo por unidade ÷ (1 − soma dos percentuais)</b></p>
       <p class="tip" style="margin:0">Exemplo: custo de R$ 10,00, com custos operacionais 15%, imposto 8%, cartão 2,9% e lucro 20%. A soma é 45,9%, então o preço é 10 ÷ 0,541 = <b>R$ 18,48</b>. Desse valor, R$ 3,70 (20%) é lucro. Por que não simplesmente custo × 1,459 (R$ 14,59)? Porque os percentuais incidem sobre o preço de venda, e não sobre o custo. Com R$ 14,59 você pagaria as taxas sobre um preço menor e o lucro de verdade ficaria abaixo dos 20%.</p></div>
@@ -1035,7 +1046,7 @@ function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <button class="x" data-del="${k}" title="Remover">✕</button></div>`}
 function calc(it){
   const ing=it.ings.reduce((a,i)=>{const c=rcost(i);return a+(isFinite(c)?c:0)},0);
-  const total=ing+num(it.emb)+num(it.mo)+num(it.gas), un=total/(num(it.rend)||1)+(S.cfg.fm==='R$'?num(S.cfg.fixo):0);
+  const total=ing+num(it.emb)+num(it.mo)+num(it.gas)+num(it.maquina), un=total/(num(it.rend)||1)+(S.cfg.fm==='R$'?num(S.cfg.fixo):0);
   const {fixo,imp,lucro,cartao}=S.cfg,fp=S.cfg.fm==='R$'?0:num(fixo),tx=fp+num(imp)+num(cartao),perc=tx+num(lucro);
   const sug=perc<100?un/(1-perc/100):NaN,dv=perc+num(S.cfg.deliv),sugD=dv<100?un/(1-dv/100):NaN;
   const ad=num(it.final)>0?num(it.final):(S.cfg.a90&&isFinite(sug)?r90(sug):sug);
@@ -1062,7 +1073,7 @@ function renderEd(){
     <div><label>Categoria ${tip('Para agrupar seus itens (Lanches, Bebidas, Sobremesas...). Opcional.')}</label><input data-f="cat" value="${esc(it.cat)}" placeholder="Ex.: Lanches"></div></div>
     <div class="g2" style="margin-top:10px"><div><label>Rendimento (quantas porções/unidades a receita faz) ${tip('Quantas unidades ou porções a receita inteira produz. Ex.: uma receita que rende 10 fatias = 10.')}</label><input type="number" min="1" data-f="rend" value="${it.rend}"></div>
     <div><label>Embalagem/outros custos da receita (R$) ${tip('Custo de embalagem, sacolas, etiquetas e outros itens usados na receita inteira.')}</label><input type="number" min="0" step="0.01" data-f="emb" value="${it.emb}"></div></div>
-    <div class="g2" style="margin-top:10px"><div><label>Mão de obra da receita (R$) ${tip('Quanto custa o tempo de quem prepara a receita inteira, em reais. Veja no Tutorial como calcular.')}</label><input type="number" min="0" step="0.01" data-f="mo" value="${it.mo||0}"></div><div><label>Gás, água e energia da receita (R$) ${tip('Gás, água e energia gastos na receita inteira. Veja no Tutorial como calcular.')}</label><input type="number" min="0" step="0.01" data-f="gas" value="${it.gas||0}"></div></div></div>
+    <div class="g2" style="margin-top:10px"><div><label>Mão de obra do lote (R$) ${tip('Custo do tempo de quem prepara o lote inteiro. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="mo" value="${it.mo||0}"></div><div><label>Gás, água e energia do lote (R$) ${tip('Consumo total durante o lote. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="gas" value="${it.gas||0}"></div><div><label>Máquina e manutenção do lote (R$) ${tip('Depreciação e manutenção proporcionais ao tempo de uso. Calcule em Custos de produção.')}</label><input type="number" min="0" step="0.01" data-f="maquina" value="${it.maquina||0}"></div></div></div></div>
   <div class="card"><h2>Ingredientes / insumos</h2>
     <datalist id="dl">${Object.values(S.lib).map(l=>`<option value="${esc(l.n)}">`).join('')}</datalist>${it.ings.map(rowHtml).join('')}
     <button id="addIng">+ Adicionar ingrediente</button>
@@ -1132,7 +1143,7 @@ $('#exp').onclick=e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k
   try{const [ext,data,nm]=EXP[k]();out((nm||stamp())+ext,data)}catch(err){toast('Erro ao gerar '+k+'. Tente novamente.')}};
 ['fixo','imp','lucro','deliv','cartao','desc'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]??0;e.oninput=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
 ['fm','dm'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]||'%';e.onchange=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
-$('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',rend:1,emb:0,mo:0,gas:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
+$('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',rend:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
 $('#list').onclick=e=>{const d=e.target.closest('[data-id]');if(d){S.sel=d.dataset.id;renderList();renderEd();$('#ed').scrollIntoView({behavior:'smooth'})}};
 $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
   if(t.dataset.f)it[t.dataset.f]=t.value;
@@ -1162,7 +1173,8 @@ const CALCS=[
 {to:'gas',bt:'Somar ao item',t:'Energia elétrica',d:'Para forno elétrico, batedeira, fritadeira e outros aparelhos. A potência (watts) fica na etiqueta do aparelho e o preço do kWh está na sua conta de luz.',f:'Potência em kW × horas ligado × preço do kWh',u:'Some ao campo Gás, água e energia do item.',in:[['Potência do aparelho (watts)',1500],['Tempo ligado na receita (minutos)',40],['Preço do kWh (R$)',0.95]],fn:(w,m,t)=>w/1000*m/60*t},
 {to:'gas',bt:'Somar ao item',t:'Água',d:'Água usada para lavar, cozinhar e limpar durante a receita. O preço do m³ (1.000 litros) está na conta de água, somando o esgoto.',f:'Litros usados ÷ 1.000 × preço do m³',u:'Some ao campo Gás, água e energia do item.',in:[['Litros usados na receita',30],['Preço do m³ de água + esgoto (R$)',12]],fn:(l,p)=>l/1000*p},
 {to:'mo',bt:'Usar no item',t:'Mão de obra',d:'O custo do tempo de quem produz. Se for funcionário, inclua os encargos (13º, férias, FGTS, INSS). Se for você, use quanto quer ganhar por mês (pró-labore).',f:'Salário com encargos ÷ horas trabalhadas no mês ÷ 60 × minutos na receita',u:'Coloque no campo Mão de obra do item. Se a receita rende várias unidades, o site divide pelo rendimento.',in:[['Salário ou retirada mensal (R$)',2200],['Encargos (%) — use 0 se for você',70],['Horas trabalhadas no mês',176],['Minutos gastos na receita',60]],fn:(s,e,h,m)=>h>0?s*(1+e/100)/h*m/60:NaN},
-{to:'cfg',bt:'Usar em Ajustes',t:'Custos operacionais (%)',d:'Some as despesas fixas do mês (aluguel, luz, água, internet, contador, salários da equipe de apoio...) e divida pelo faturamento médio mensal.',f:'Custos fixos do mês ÷ faturamento do mês × 100',u:'Use em Ajustes, campo Custos operacionais (em %). Se já contou salários aqui, não repita na Mão de obra do item.',pct:1,in:[['Custos fixos totais do mês (R$)',6000],['Faturamento médio mensal (R$)',40000]],fn:(c,f)=>f>0?c/f*100:NaN}];
+{to:'cfg',bt:'Usar em Ajustes',t:'Custos operacionais (%)',d:'Some as despesas fixas do mês (aluguel, luz, água, internet, contador, salários da equipe de apoio...) e divida pelo faturamento médio mensal.',f:'Custos fixos do mês ÷ faturamento do mês × 100',u:'Use em Ajustes, campo Custos operacionais (em %). Se já contou salários aqui, não repita na Mão de obra do item.',pct:1,in:[['Custos fixos totais do mês (R$)',6000],['Faturamento médio mensal (R$)',40000]],fn:(c,f)=>f>0?c/f*100:NaN},
+{to:'machine',bt:'Somar ao item',t:'Uso da máquina (depreciação + manutenção)',d:'Rateie o desgaste e a manutenção pelo tempo real de uso. Informe compra, valor residual, vida útil em horas, manutenção mensal, horas de uso no mês e minutos deste lote.',f:'[(Compra − residual) ÷ vida útil + manutenção mensal ÷ horas mensais] × minutos do lote ÷ 60',u:'O resultado é somado ao campo Máquina e manutenção do lote. Não inclua energia elétrica aqui: calcule-a separadamente.',in:[['Preço de compra da máquina (R$)',0],['Valor residual estimado (R$)',0],['Vida útil estimada (horas)',5000],['Manutenção prevista por mês (R$)',0],['Horas de uso por mês',100],['Minutos de uso neste lote',30]],fn:(p,r,v,m,h,t)=>v>0&&h>0?((Math.max(0,p-r)/v)+(m/h))*t/60:NaN}];
 function cc1(card){const c=CALCS[+card.dataset.c],r=c.fn(...[...card.querySelectorAll('input')].map(i=>num(i.value)));card.querySelector('.cr b').textContent=c.pct?pc(r):brl(r);card.dataset.r=r}
 function renderCalcs(){$('#calcs').innerHTML=CALCS.map((c,i)=>`<div class="card cc" data-c="${i}"><h2>${c.t}</h2><p class="tip" style="margin:0 0 10px">${c.d}</p><div class="fm">${c.f}</div>${c.in.map(([l,v])=>`<div><label>${l}</label><input type="number" min="0" step="any" value="${v}"></div>`).join('')}<div class="cr"><span>Resultado</span><b></b></div><button class="p" data-use style="width:100%;margin-top:10px">${c.bt}</button><p class="tip">${c.u}</p></div>`).join('');document.querySelectorAll('.cc').forEach(cc1)}
 $('#calcs').addEventListener('input',e=>{const k=e.target.closest('.cc');if(k)cc1(k)});
@@ -1170,14 +1182,14 @@ renderCalcs();
 $('#calcs').addEventListener('click',e=>{const b=e.target.closest('[data-use]');if(!b)return;const k=b.closest('.cc'),c=CALCS[+k.dataset.c],r=+k.dataset.r;if(!isFinite(r))return toast('Preencha os campos para calcular');
  if(c.to==='cfg'){S.cfg.fixo=+r.toFixed(2);S.cfg.fm='%';$('#fixo').value=S.cfg.fixo;$('#fm').value='%';save();renderList();return toast('Custos operacionais em Ajustes: '+pc(r))}
  const it=cur();if(!it)return toast('Abra ou crie um item em Produtos primeiro');
- if(c.to==='gas')it.gas=+(num(it.gas)+r).toFixed(2);else it.mo=+r.toFixed(2);
- save();renderList();toast((c.to==='gas'?'Somado a Gás, água e energia de ':'Mão de obra aplicada em ')+(it.nome||'item')+': '+brl(r))});
+ if(c.to==='gas')it.gas=+(num(it.gas)+r).toFixed(2);else if(c.to==='machine')it.maquina=+(num(it.maquina)+r).toFixed(2);else it.mo=+r.toFixed(2);
+ save();renderList();if(S.sel)renderEd();toast((c.to==='gas'?'Somado a Gás, água e energia de ':c.to==='machine'?'Somado a Máquina e manutenção de ':'Mão de obra aplicada em ')+(it.nome||'item')+': '+brl(r))});
 $('#alerts').addEventListener('click',e=>{const id=e.target.dataset.fix;if(!id)return;const it=S.items.find(i=>i.id===id),c=calc(it);it.final=(S.cfg.a90?r90(c.sug):c.sug).toFixed(2);if(S.sel===id)renderEd();else renderList();save();toast('Preço atualizado: '+brl(num(it.final)))});
 $('#logo').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.cfg.logo=c.toDataURL('image/png');biz();save();toast('Logo salvo')};im.src=r.result};r.readAsDataURL(f)};
 $('#logoX').onclick=()=>{delete S.cfg.logo;biz();save()};
 function demo(){const L=(n,preco,qtd,un)=>{S.lib[n.toLowerCase()]={n,preco,qtd,un}};L('Pão de hambúrguer',9,6,'un');L('Carne moída',38,1,'kg');L('Queijo mussarela',42,1,'kg');L('Alface',3,1,'un');
 const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
-const it={id:'i'+Date.now(),nome:'X-Burguer',cat:'Lanches',rend:1,emb:1.2,mo:2,gas:0.6,final:'',ings:[g('Pão de hambúrguer',1,'un'),g('Carne moída',150,'g',10),g('Queijo mussarela',40,'g'),g('Alface',0.1,'un')]};
+const it={id:'i'+Date.now(),nome:'X-Burguer',cat:'Lanches',rend:1,emb:1.2,mo:2,gas:0.6,maquina:0,final:'',ings:[g('Pão de hambúrguer',1,'un'),g('Carne moída',150,'g',10),g('Queijo mussarela',40,'g'),g('Alface',0.1,'un')]};
 S.items.push(it);S.sel=it.id;show('itens');renderList();renderEd();save()}
 function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
 $('#nome').value=S.cfg.nome||'';$('#nome').oninput=e=>{S.cfg.nome=e.target.value;biz();save()};biz();
