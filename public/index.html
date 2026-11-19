@@ -997,7 +997,7 @@ body.app-open .app{display:grid!important}
       <div><b>Ficha técnica</b><p class="tip">A receita com quantidades e custos de cada ingrediente. Cada item do site é uma ficha técnica.</p></div>
       <div><b>Perda (fator de correção)</b><p class="tip">O que se perde no preparo, como casca e osso. Você paga por 1 kg, mas aproveita menos.</p></div>
       <div><b>Insumo</b><p class="tip">Qualquer ingrediente ou material que você compra para produzir.</p></div></div>
-      <p style="margin:16px 0 0"><button onclick="demo()">Ver um exemplo pronto (X-Burguer)</button></p></div>
+      <p style="margin:16px 0 0"><button onclick="demo()">Ver exemplos prontos (coxinhas e mini churros)</button></p></div>
   </section>
   <section class="view" id="v-export" hidden>
     <div class="ph"><div><h1>Exportar</h1><p class="sub2">Baixe sua tabela de preços pronta para usar ou compartilhar.</p></div></div>
@@ -1069,7 +1069,7 @@ function renderEd(){
   if(!it){$('#ed').innerHTML='<div class="card empty"><h2>Bem-vindo ao Preço do Bom 👋</h2><p>Ajuste os percentuais do seu negócio ao lado, cadastre um produto ou prato com seus ingredientes e veja o preço certo na hora.</p><button class="p" onclick="add.click()">+ Criar meu primeiro item</button> <button onclick="demo()">Ver um exemplo pronto</button> <button onclick="show(&quot;tutorial&quot;)">Como usar</button></div>';return}
   $('#ed').innerHTML=`
   <div class="card"><h2>Dados do item</h2>
-    <div class="g2"><div><label>Nome do produto/prato</label><input data-f="nome" value="${esc(it.nome)}" placeholder="Ex.: X-Burguer"></div>
+    <div class="g2"><div><label>Nome do produto/prato</label><input data-f="nome" value="${esc(it.nome)}" placeholder="Ex.: Coxinha tradicional"></div>
     <div><label>Categoria ${tip('Para agrupar seus itens (Lanches, Bebidas, Sobremesas...). Opcional.')}</label><input data-f="cat" value="${esc(it.cat)}" placeholder="Ex.: Lanches"></div></div>
     <div class="g2" style="margin-top:10px"><div><label>Rendimento (quantas porções/unidades a receita faz) ${tip('Quantas unidades ou porções a receita inteira produz. Ex.: uma receita que rende 10 fatias = 10.')}</label><input type="number" min="1" data-f="rend" value="${it.rend}"></div>
     <div><label>Embalagem/outros custos da receita (R$) ${tip('Custo de embalagem, sacolas, etiquetas e outros itens usados na receita inteira.')}</label><input type="number" min="0" step="0.01" data-f="emb" value="${it.emb}"></div></div>
@@ -1187,10 +1187,16 @@ $('#calcs').addEventListener('click',e=>{const b=e.target.closest('[data-use]');
 $('#alerts').addEventListener('click',e=>{const id=e.target.dataset.fix;if(!id)return;const it=S.items.find(i=>i.id===id),c=calc(it);it.final=(S.cfg.a90?r90(c.sug):c.sug).toFixed(2);if(S.sel===id)renderEd();else renderList();save();toast('Preço atualizado: '+brl(num(it.final)))});
 $('#logo').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.cfg.logo=c.toDataURL('image/png');biz();save();toast('Logo salvo')};im.src=r.result};r.readAsDataURL(f)};
 $('#logoX').onclick=()=>{delete S.cfg.logo;biz();save()};
-function demo(){const L=(n,preco,qtd,un)=>{S.lib[n.toLowerCase()]={n,preco,qtd,un}};L('Pão de hambúrguer',9,6,'un');L('Carne moída',38,1,'kg');L('Queijo mussarela',42,1,'kg');L('Alface',3,1,'un');
-const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
-const it={id:'i'+Date.now(),nome:'X-Burguer',cat:'Lanches',rend:1,emb:1.2,mo:2,gas:0.6,maquina:0,final:'',ings:[g('Pão de hambúrguer',1,'un'),g('Carne moída',150,'g',10),g('Queijo mussarela',40,'g'),g('Alface',0.1,'un')]};
-S.items.push(it);S.sel=it.id;show('itens');renderList();renderEd();save()}
+function demo(){
+ const L=(n,preco,qtd,un)=>{S.lib[n.toLowerCase()]={n,preco,qtd,un}};
+ L('Farinha de trigo',6.5,1,'kg');L('Leite',5.5,1,'l');L('Margarina',12,0.5,'kg');L('Peito de frango',18,1,'kg');L('Requeijão',9,0.2,'kg');L('Farinha de rosca',8,0.5,'kg');
+ L('Doce de leite',14,0.4,'kg');L('Açúcar',4.5,1,'kg');L('Canela em pó',5,0.05,'kg');L('Óleo',8,0.9,'l');
+ const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
+ const id='i'+Date.now();
+ const coxinha={id:id+'c',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
+ const churros={id:id+'m',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
+ S.items.push(coxinha,churros);S.sel=coxinha.id;show('itens');renderList();renderEd();save()
+}
 function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
 $('#nome').value=S.cfg.nome||'';$('#nome').oninput=e=>{S.cfg.nome=e.target.value;biz();save()};biz();
 $('#a90').checked=!!S.cfg.a90;$('#a90').onchange=e=>{S.cfg.a90=e.target.checked;refresh();renderList();save()};
