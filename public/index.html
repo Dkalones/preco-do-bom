@@ -1355,15 +1355,16 @@ try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}ca
 const legacyCount=S.items.length;S.items=S.items.filter(it=>(it.nome||'').trim().toLowerCase()!=='x-burguer');if(S.items.length!==legacyCount&&!S.items.some(it=>it.id===S.sel))S.sel=S.items[0]?.id||null;
 
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
-let tm=null,ver=0,pushing=false;
+let tm=null,ver=0,pushing=false,cloudReady=false;
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
-const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
+const save=()=>{S._dirty=1;ver++;persist();if(!cloudReady){setStat('Aguardando sincronização…');return}setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
 function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
 async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json',...(o.headers||{})}});let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
 const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
 function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
 async function doPush(){
  clearTimeout(tm);
+ if(!cloudReady){setStat('Aguardando sincronização…');return;}
  if(pushing)return;
  pushing=true;
  const version=ver;
@@ -1683,19 +1684,25 @@ renderList();renderEd();
   const c=(await api('state')).j;ok();
   if(!c){
    if(semVinculo&&S.items.length)S._dirty=1;
+   cloudReady=true;
    if(S._dirty)await doPush();else setStat('Nuvem pronta ✓');
   }else if(semVinculo){
-   // Primeiro acesso ou dados locais antigos: a nuvem é a fonte principal.
-   // Preserva uma cópia local antiga antes de carregar o estado compartilhado.
    if(S.items.length||Object.keys(S.lib||{}).length)try{await bk('local-primeiro-acesso')}catch(e){}
    applyCloud(c);return;
-  }else if(c.updatedAt===S._base){if(S._dirty)await doPush();else setStat('Sincronizado ✓')}
-  else if(!S._dirty){applyCloud(c);return}
-  else if(confirm('Este aparelho tem alterações que ainda não estão na nuvem, e a nuvem já tem uma versão.\nOK = manter os dados deste aparelho (sobrescreve a nuvem)\nCancelar = usar a versão da nuvem (as alterações locais ficam em backup)')){S._base=c.updatedAt;await doPush()}
-  else{await bk('local');applyCloud(c);return}
+  }else if(c.updatedAt===S._base){
+   cloudReady=true;
+   if(S._dirty)await doPush();else setStat('Sincronizado ✓');
+  }else{
+   // A nuvem tem uma versão mais recente: preservar local em backup e carregar a compartilhada.
+   try{await bk('conflito-local')}catch(e){}
+   applyCloud(c);return;
+  }
   const d=new Date().toISOString().slice(0,10);
   if(localStorage.getItem('pdb_bk')!==d&&S.items.length){await bk('auto');localStorage.setItem('pdb_bk',d)}
- }catch(e){if(e!==401){ok();setStat('Erro na nuvem ('+(e&&e.message||e)+') – usando os dados deste aparelho')}}
+ }catch(e){
+  cloudReady=true;
+  if(e!==401){ok();setStat('Erro na nuvem ('+(e&&e.message||e)+') – usando os dados deste aparelho')}
+ }
 })();
 </script>
 <script src="/gestao.js"></script>
