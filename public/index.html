@@ -812,6 +812,125 @@ body.app-open .app{display:grid!important}
 }
 @media(prefers-reduced-motion:reduce){.welcome-primary span{transition:none}}
 
+
+/* Refinamento visual e distribuição do painel */
+:root{--sidebar:#123d2c;--sidebar-hover:#1b503b;--sidebar-active:#245b43;--content-width:1760px}
+body{background:#f8f4e8}
+.app{grid-template-columns:252px minmax(0,1fr);max-width:100%;background:var(--bg)}
+.side{background:var(--sidebar);color:#d8e7dc;padding:20px 13px;gap:16px;border-right:1px solid rgba(12,50,34,.12)}
+.biz{padding:5px 8px 18px;border-bottom-color:rgba(255,255,255,.13)}
+.av{background:#1d5940;border-color:#26bd75}
+.menu-n{gap:13px;padding:3px 0 12px}
+.nav-group{gap:4px}
+.nav-label{color:#8eafa0;padding:7px 12px 4px;font-size:9px;letter-spacing:1.25px}
+.menu-n button{min-height:42px;padding:10px 12px;border-radius:10px;color:#d2e1d7;font-size:13px;transition:background .16s,color .16s,box-shadow .16s}
+.menu-n button:hover{background:rgba(255,255,255,.075);color:#fff}
+.menu-n button.on{background:var(--sidebar-active);color:#fff;box-shadow:inset 3px 0 #18b76b}
+.menu-n button.on svg{color:#5be0a1}
+.brand{padding:8px 5px 3px}
+.brand .mark{background:#087d4a}
+.content{max-width:var(--content-width);padding:clamp(22px,2.2vw,38px) clamp(22px,2.5vw,44px);min-width:0}
+.ph{align-items:center;margin-bottom:22px}
+.ph h1{font-size:clamp(24px,2vw,31px);letter-spacing:-.8px}
+.sub2{font-size:14px;color:#78877b;max-width:72ch}
+.ph>button{min-height:44px;padding-inline:20px}
+.kpis{gap:14px;margin-bottom:18px}
+.kpi{padding:15px 17px;border-radius:15px;background:#fffdf7}
+.kpi span{font-size:12px}
+.kpi b{font-size:24px}
+.split{grid-template-columns:minmax(225px,260px) minmax(0,1fr);gap:18px;align-items:start}
+.split>.card{position:sticky;top:18px;max-height:calc(100dvh - 36px);overflow:auto;padding:17px}
+#list{max-height:calc(100dvh - 180px);overflow-y:auto;padding-right:2px}
+.item{padding:12px 12px;margin-bottom:9px;min-width:0}
+.item>div:first-child{min-width:0;overflow-wrap:anywhere}
+.pr{font-size:14px;flex:none}
+#ed{grid-template-columns:minmax(0,1fr) minmax(300px,350px);gap:16px;align-items:start}
+#ed>*{min-width:0}
+#ed>.res{top:18px;max-height:calc(100dvh - 36px);overflow:auto;border-radius:17px;padding:19px}
+#ed>.card{padding:19px;border-radius:16px;background:#fffdf7}
+#ed>.card h2{font-size:17px;margin-bottom:14px}
+#ed .g2{gap:12px}
+#ed label{font-size:12px;line-height:1.4;margin-bottom:5px}
+#ed input,#ed select{min-height:43px;padding:10px 11px}
+#ed .ing{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:13px}
+#ed .ing>:first-child{grid-column:1/-1}
+#ed .res .big{font-size:36px}
+#ed .res .row{font-size:12.5px;gap:12px}
+#ed .charge-box{margin-top:0;padding:17px;border-radius:15px;background:#fffdf7;border-color:#e7dfcc}
+#ed .charge-head{align-items:center}
+#ed .charge-results{grid-template-columns:repeat(2,minmax(0,1fr))}
+#ed .charge-results>div{padding:11px}
+#ed .charge-actions button{font-size:11px}
+.card,.gb-panel{border-radius:16px;box-shadow:0 2px 5px rgba(38,49,35,.035),0 10px 28px rgba(38,49,35,.045)}
+.gb-panel{padding:19px}
+.gb-grid{gap:14px}
+.gb-stat{border-radius:14px}
+input,select,textarea{border-radius:10px}
+button{border-radius:10px}
+button.p{box-shadow:0 3px 8px rgba(1,141,62,.13)}
+button:focus-visible,.menu-n button:focus-visible{outline:3px solid rgba(29,190,111,.4);outline-offset:2px}
+@media(min-width:1500px){
+ .app{grid-template-columns:264px minmax(0,1fr)}
+ .content{padding:34px clamp(30px,2.6vw,48px)}
+ .split{grid-template-columns:270px minmax(0,1fr);gap:20px}
+ #ed{grid-template-columns:minmax(0,1fr) 360px;gap:18px}
+}
+@media(max-width:1240px) and (min-width:1025px){
+ .app{grid-template-columns:224px minmax(0,1fr)}
+ .side{padding-inline:10px}
+ .content{padding:22px}
+ .split{grid-template-columns:220px minmax(0,1fr);gap:13px}
+ #ed{grid-template-columns:minmax(0,1fr) 300px;gap:12px}
+ #ed>.card{padding:15px}
+ #ed>.res{padding:15px}
+ #ed .ing{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpis,.gb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:1024px){
+ .app{display:block;overflow:visible}
+ .side{position:fixed;inset:auto 0 0;width:100%;height:auto;max-height:94px;min-height:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:50;border-right:0;border-top:1px solid rgba(255,255,255,.12);overflow-x:auto;overflow-y:hidden}
+ .biz,.brand{display:none}
+ .menu-n{display:flex;flex-direction:row;justify-content:flex-start;gap:4px;width:max-content;min-width:100%;overflow-x:auto;overflow-y:hidden;padding:0;scrollbar-width:none}
+ .menu-n::-webkit-scrollbar{display:none}
+ .nav-group{display:contents}
+ .nav-label{display:none}
+ .menu-n button{flex:0 0 72px;width:72px;min-height:60px;padding:5px 3px;gap:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:10px}
+ .menu-n button svg{width:19px;height:19px;flex:none}
+ .menu-n button span{font-size:10px;line-height:1.1;white-space:nowrap}
+ .content{max-width:none;padding:22px 18px calc(112px + env(safe-area-inset-bottom,0px))}
+ .split{grid-template-columns:minmax(0,1fr)}
+ .split>.card{position:static;max-height:none}
+ #list{max-height:260px}
+ #ed{grid-template-columns:minmax(0,1fr) minmax(280px,340px)}
+ #ed>.res{position:static;grid-row:1/span 4;max-height:none}
+}
+@media(max-width:760px){
+ .content{padding:17px 13px calc(112px + env(safe-area-inset-bottom,0px))}
+ .ph{align-items:flex-start;flex-wrap:wrap;margin-bottom:15px}
+ .ph>div{flex:1 1 100%}
+ .ph h1{font-size:23px}
+ .ph>button{width:100%}
+ .split{grid-template-columns:minmax(0,1fr)}
+ #ed{grid-template-columns:minmax(0,1fr)}
+ #ed>.res{grid-column:1;grid-row:auto;position:static}
+ #ed>*{grid-column:1}
+ #ed .ing{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpis,.gb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .kpi{padding:12px}
+ .kpi b{font-size:20px}
+ .cols{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:480px){
+ .content{padding-inline:11px}
+ #ed>.card,#ed>.res{padding:14px}
+ #ed .g2{grid-template-columns:minmax(0,1fr)}
+ #ed .ing{grid-template-columns:minmax(0,1fr)}
+ #ed .charge-results{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpi b{font-size:18px}
+ .menu-n button{flex-basis:66px;width:66px}
+}
+@media(prefers-reduced-motion:reduce){.menu-n button{transition:none}}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
