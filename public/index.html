@@ -1544,13 +1544,46 @@ $('#alerts').addEventListener('click',e=>{const id=e.target.dataset.fix;if(!id)r
 $('#logo').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.cfg.logo=c.toDataURL('image/png');biz();save();toast('Logo salvo')};im.src=r.result};r.readAsDataURL(f)};
 $('#logoX').onclick=()=>{delete S.cfg.logo;biz();save()};
 function demo(){
- const L=(n,preco,qtd,un)=>{S.lib[n.toLowerCase()]={n,preco,qtd,un}};
- L('Farinha de trigo',6.5,1,'kg');L('Leite',5.5,1,'l');L('Margarina',12,0.5,'kg');L('Peito de frango',18,1,'kg');L('Requeijão',9,0.2,'kg');L('Farinha de rosca',8,0.5,'kg');
- L('Doce de leite',14,0.4,'kg');L('Açúcar',4.5,1,'kg');L('Canela em pó',5,0.05,'kg');L('Óleo',8,0.9,'l');
+ // Preços demonstrativos de compra. Se o usuário já cadastrou um insumo,
+ // preserva o preço real da biblioteca em vez de sobrescrevê-lo.
+ const L=(n,preco,qtd,un)=>{const k=n.toLowerCase();if(!S.lib[k])S.lib[k]={n,preco,qtd,un}};
+ L('Farinha de trigo',6.5,1,'kg');
+ L('Leite integral',5.5,1,'L');
+ L('Água',12,1000,'L');
+ L('Margarina',12,0.5,'kg');
+ L('Peito de frango',18,1,'kg');
+ L('Requeijão cremoso',9,0.2,'kg');
+ L('Farinha de rosca',8,0.5,'kg');
+ L('Ovos',18,12,'un');
+ L('Cebola',5,1,'kg');
+ L('Alho',28,1,'kg');
+ L('Tomate',7,1,'kg');
+ L('Cheiro-verde',3,1,'un');
+ L('Caldo de galinha',3.5,6,'un');
+ L('Sal',3,1,'kg');
+ L('Óleo de soja',8.5,0.9,'L');
+ L('Doce de leite',14,0.4,'kg');
+ L('Açúcar',4.5,1,'kg');
+ L('Canela em pó',5,0.05,'kg');
  const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
  const id='i'+Date.now();
- const coxinha={id:id+'c',priceMode:'porcao',loteNome:'Fornada de coxinhas',unidadeNome:'coxinhas',porcaoNome:'Caixa com 10',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[g('Farinha de trigo',1800,'g'),g('Leite',1500,'ml'),g('Margarina',120,'g'),g('Peito de frango',1200,'g',8),g('Requeijão',250,'g'),g('Farinha de rosca',400,'g'),g('Óleo',500,'ml')]};
- const churros={id:id+'m',priceMode:'porcao',loteNome:'Produção de mini churros',unidadeNome:'mini churros',porcaoNome:'Porção com 20',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,porcao:20,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[g('Farinha de trigo',1600,'g'),g('Leite',1000,'ml'),g('Margarina',100,'g'),g('Doce de leite',900,'g'),g('Açúcar',250,'g'),g('Canela em pó',25,'g'),g('Óleo',700,'ml')]};
+ const coxinha={id:id+'c',priceMode:'porcao',loteNome:'Fornada de coxinhas',unidadeNome:'coxinhas',porcaoNome:'Caixa com 10',nome:'Coxinha tradicional (lote de 100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[
+  // Massa
+  g('Farinha de trigo',1800,'g'),g('Leite integral',1200,'ml'),g('Água',1500,'ml'),g('Margarina',150,'g'),g('Sal',30,'g'),g('Caldo de galinha',3,'un'),
+  // Recheio de frango
+  g('Peito de frango',1500,'g',8),g('Cebola',250,'g'),g('Alho',25,'g'),g('Tomate',250,'g'),g('Cheiro-verde',1,'un'),g('Óleo de soja',80,'ml'),g('Requeijão cremoso',350,'g'),
+  // Empanamento e fritura: óleo representa apenas a reposição/absorção estimada do lote,
+  // não o volume total colocado na fritadeira e reutilizado em outras fornadas.
+  g('Ovos',4,'un'),g('Farinha de rosca',700,'g'),g('Óleo de soja',550,'ml')
+ ]};
+ const churros={id:id+'m',priceMode:'porcao',loteNome:'Produção de mini churros',unidadeNome:'mini churros',porcaoNome:'Porção com 20',nome:'Mini churros com doce de leite (lote de 200 un.)',cat:'Doces',rend:200,porcao:20,emb:10,mo:15,gas:2.5,maquina:3,final:'',ings:[
+  // Massa dos churros
+  g('Farinha de trigo',1600,'g'),g('Água',1800,'ml'),g('Leite integral',500,'ml'),g('Margarina',120,'g'),g('Ovos',8,'un'),g('Sal',15,'g'),
+  // Recheio e finalização
+  g('Doce de leite',1200,'g'),g('Açúcar',350,'g'),g('Canela em pó',30,'g'),
+  // Fritura: estimativa de óleo efetivamente consumido/reposição do lote
+  g('Óleo de soja',700,'ml')
+ ]};
  S.items=S.items.filter(it=>!['x-burguer','coxinha tradicional (lote de 100 un.)','mini churros com doce de leite (lote de 200 un.)'].includes((it.nome||'').trim().toLowerCase()));S.items.push(coxinha,churros);S.sel=coxinha.id;show('itens');renderList();renderEd();save()
 }
 function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
