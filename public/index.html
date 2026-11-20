@@ -1678,13 +1678,20 @@ if(!S.items.find(i=>i.id===S.sel))S.sel=S.items[0]?.id||null;
 renderList();renderEd();
 (async()=>{
  const ok=()=>{};
- if(S._base===undefined&&S.items.length)S._dirty=1;
+ const semVinculo=S._base===undefined;
  try{
   const c=(await api('state')).j;ok();
-  if(!c){S._dirty=1;await doPush()}
-  else if(c.updatedAt===S._base){if(S._dirty)await doPush();else setStat('Sincronizado ✓')}
+  if(!c){
+   if(semVinculo&&S.items.length)S._dirty=1;
+   if(S._dirty)await doPush();else setStat('Nuvem pronta ✓');
+  }else if(semVinculo){
+   // Primeiro acesso ou dados locais antigos: a nuvem é a fonte principal.
+   // Preserva uma cópia local antiga antes de carregar o estado compartilhado.
+   if(S.items.length||Object.keys(S.lib||{}).length)try{await bk('local-primeiro-acesso')}catch(e){}
+   applyCloud(c);return;
+  }else if(c.updatedAt===S._base){if(S._dirty)await doPush();else setStat('Sincronizado ✓')}
   else if(!S._dirty){applyCloud(c);return}
-  else if(confirm('Este aparelho tem alterações que ainda não estão na nuvem, e a nuvem já tem uma versão.\nOK = manter os dados deste aparelho (sobrescreve a nuvem)\nCancelar = usar a nuvem (os deste aparelho vão para backup)')){S._base=c.updatedAt;await doPush()}
+  else if(confirm('Este aparelho tem alterações que ainda não estão na nuvem, e a nuvem já tem uma versão.\nOK = manter os dados deste aparelho (sobrescreve a nuvem)\nCancelar = usar a versão da nuvem (as alterações locais ficam em backup)')){S._base=c.updatedAt;await doPush()}
   else{await bk('local');applyCloud(c);return}
   const d=new Date().toISOString().slice(0,10);
   if(localStorage.getItem('pdb_bk')!==d&&S.items.length){await bk('auto');localStorage.setItem('pdb_bk',d)}
