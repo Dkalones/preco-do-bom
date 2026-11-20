@@ -1355,16 +1355,43 @@ try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}ca
 const legacyCount=S.items.length;S.items=S.items.filter(it=>(it.nome||'').trim().toLowerCase()!=='x-burguer');if(S.items.length!==legacyCount&&!S.items.some(it=>it.id===S.sel))S.sel=S.items[0]?.id||null;
 
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
+let tm=null,ver=0,pushing=false;
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
 const save=()=>{S._dirty=1;ver++;persist();setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
 function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
 async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json',...(o.headers||{})}});let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
 const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
 function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
-async function doPush(){clearTimeout(tm);const v=ver;try{const r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
-  if(r.s===409){if(confirm('Outra pessoa salvou depois da sua última sincronização.\nOK = sobrescrever com as suas alterações\nCancelar = usar a versão da nuvem (as suas ficam em backup)')){S._base=r.j.updatedAt;return doPush()}
-    await bk('local');const c=(await api('state')).j;if(c)applyCloud(c);return}
-  S._base=r.j.updatedAt;if(v===ver)S._dirty=0;persist();setStat('Salvo na nuvem ✓')}catch(e){if(e!==401)setStat('Erro na nuvem ('+(e&&e.message||e)+') – salvo só neste aparelho')}}
+async function doPush(){
+ clearTimeout(tm);
+ if(pushing)return;
+ pushing=true;
+ const version=ver;
+ try{
+  let r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
+  if(r.s===409){
+   if(confirm('Outra pessoa salvou depois da sua última sincronização.\\nOK = sobrescrever com as suas alterações\\nCancelar = usar a versão da nuvem (as suas ficam em backup)')){
+    S._base=r.j.updatedAt;
+    r=await api('state',{method:'PUT',body:JSON.stringify({state:clean(),base:S._base||0})});
+    if(r.s===409)throw new Error('O estado mudou novamente. Tente salvar mais uma vez.');
+   }else{
+    await bk('local');
+    const c=(await api('state')).j;
+    if(c)applyCloud(c);
+    return;
+   }
+  }
+  S._base=r.j.updatedAt;
+  if(version===ver)S._dirty=0;
+  persist();
+  setStat(S._dirty?'Alterações pendentes…':'Salvo na nuvem ✓');
+ }catch(e){
+  setStat('Erro na nuvem ('+(e&&e.message||e)+') – salvo só neste aparelho');
+ }finally{
+  pushing=false;
+  if(S._dirty&&version!==ver){clearTimeout(tm);tm=setTimeout(doPush,600)}
+ }
+}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&S._dirty)doPush()});
 const tip=t=>`<span class="inf" tabindex="0" data-tip="${t}">i</span>`;
 const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
