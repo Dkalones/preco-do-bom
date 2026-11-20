@@ -1359,7 +1359,7 @@ let tm=null,ver=0,pushing=false,cloudReady=false;
 const clean=()=>{const {_base,_dirty,updatedAt,updatedBy,...st}=S;return st};
 const save=()=>{S._dirty=1;ver++;persist();if(!cloudReady){setStat('Aguardando sincronização…');return}setStat('Salvando…');clearTimeout(tm);tm=setTimeout(doPush,2500)};
 function setStat(t){let p=document.getElementById('sync');if(!p){p=document.createElement('div');p.id='sync';p.style.cssText='position:fixed;left:12px;bottom:12px;z-index:99;background:#fff;color:#334;border:1px solid #0002;border-radius:99px;padding:5px 12px;font:12px system-ui;box-shadow:0 2px 8px #0002';document.body.appendChild(p)}p.textContent=t;const s=document.getElementById('syncTxt');if(s)s.textContent=t}
-async function api(p,o={}){const r=await fetch('/api/'+p,{...o,headers:{'content-type':'application/json',...(o.headers||{})}});let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
+async function api(p,o={}){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);let r;try{r=await fetch('/api/'+p,{...o,signal:controller.signal,headers:{'content-type':'application/json',...(o.headers||{})}})}catch(e){throw new Error(e.name==='AbortError'?'Tempo esgotado ao conectar com a nuvem':'Falha de conexão: '+(e.message||e))}finally{clearTimeout(timer)}let j=null;try{j=await r.json()}catch(e){}if(!r.ok&&r.status!==409)throw new Error((j&&j.error)||('HTTP '+r.status));return{s:r.status,j}}
 const bk=(tag)=>api('backup',{method:'POST',body:JSON.stringify({state:clean(),tag})});
 function applyCloud(c){try{localStorage.setItem('pdb',JSON.stringify({...c,_base:c.updatedAt,_dirty:0}))}catch(e){}location.reload()}
 async function doPush(){
@@ -1701,7 +1701,7 @@ renderList();renderEd();
   if(localStorage.getItem('pdb_bk')!==d&&S.items.length){await bk('auto');localStorage.setItem('pdb_bk',d)}
  }catch(e){
   cloudReady=true;
-  if(e!==401){ok();setStat('Erro na nuvem ('+(e&&e.message||e)+') – usando os dados deste aparelho')}
+  if(e!==401){ok();setStat('Falha ao sincronizar: '+(e&&e.message||e))}
  }
 })();
 </script>
