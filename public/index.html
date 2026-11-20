@@ -1399,7 +1399,16 @@ const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
 const newIng=()=>({n:'',preco:0,qtd:1,un:'g',uso:0,uun:'g',perda:0});
 const FAM={mg:'m',g:'m',kg:'m',ml:'v',L:'v',un:'u',dúzia:'u'},FAC={mg:0.001,g:1,kg:1000,ml:1,L:1000,un:1,dúzia:12},UN=['mg','g','kg','ml','L','un','dúzia'];
 const eff=g=>{const l=g.n&&S.lib[g.n.trim().toLowerCase()];return l?{...g,preco:l.preco,qtd:l.qtd,un:l.un}:g};
-function rcost(g){const e=eff(g),u=g.uun||e.un;if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return NaN;const comprado=num(e.qtd)*FAC[e.un],perda=Math.min(num(g.perda),95)/100,consumo=num(g.uso)*FAC[u]/(1-perda);if(comprado<=0||consumo<0||consumo>comprado+1e-9)return NaN;return num(e.preco)/comprado*consumo}
+function unitCheck(g){
+ const e=eff(g),u=g.uun||e.un;
+ if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return {ok:false,type:'units',message:'Unidades incompatíveis: compare massa com massa, volume com volume ou unidades com unidades.'};
+ const comprado=num(e.qtd)*FAC[e.un],uso=num(g.uso)*FAC[u],perda=Math.min(Math.max(num(g.perda),0),95)/100,limite=comprado*(1-perda);
+ if(comprado<=0)return {ok:false,type:'purchase',message:'Informe uma quantidade comprada maior que zero.'};
+ if(uso<0)return {ok:false,type:'usage',message:'A quantidade usada não pode ser negativa.'};
+ if(uso>limite+1e-9)return {ok:false,type:'insufficient',message:'Quantidade insuficiente: você está usando '+g.uso+' '+u+', mas a compra permite até '+(limite/FAC[u]).toLocaleString('pt-BR',{maximumFractionDigits:3})+' '+u+'. Aumente a quantidade comprada.'};
+ return {ok:true};
+}
+function rcost(g){const e=eff(g),check=unitCheck(g);if(!check.ok)return NaN;const u=g.uun||e.un,comprado=num(e.qtd)*FAC[e.un],perda=Math.min(Math.max(num(g.perda),0),95)/100,consumo=num(g.uso)*FAC[u]/(1-perda);return num(e.preco)/comprado*consumo}
 const opts=v=>UN.map(u=>`<option ${u===v?'selected':''}>${u}</option>`).join('');
 function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <div><label>Ingrediente ${tip('Digite o nome. Se você já usou esse ingrediente antes, o preço é preenchido sozinho.')}</label><input list="dl" data-g="n" value="${esc(g.n)}" placeholder="Digite ou escolha da lista"></div>
@@ -1479,7 +1488,7 @@ function refresh(){
   const dsc=num(S.cfg.desc)>0;['r-pdrow','r-ldrow'].forEach(i=>{const e=$('#'+i);if(e)e.style.display=dsc?'flex':'none'});
   set('r-pd',brl(c.pd));set('r-ld',brl(c.lucD)+' ('+pc(c.pd>0?c.lucD/c.pd*100:NaN)+')');const ld=$('#r-ld');if(ld)ld.className=c.lucD<0?'warn':'';
   document.querySelectorAll('.tier').forEach(r=>{const t=it.tiers[+r.dataset.ti],q=num(t.q),pp=c.ad*(1-num(t.d)/100),l=pp-c.un-pp*c.tx/100,e=r.querySelector('.tl');r.querySelector('.tp').textContent=brl(pp);e.textContent=brl(l);e.className='tl'+(l<0?' warn':'');r.querySelector('.tt').textContent=brl(pp*q)});const dr=$('#r-dvrow');if(dr)dr.style.display=num(S.cfg.deliv)>0?'flex':'none';
-  document.querySelectorAll('.ing').forEach(r=>{const el=r.querySelector('.rc'),v=rcost(it.ings[+r.dataset.k]);el.innerHTML=isFinite(v)?brl(v):'<span class="warn" title="Unidades incompatíveis">⚠ unid.</span>'});
+  document.querySelectorAll('.ing').forEach(r=>{const el=r.querySelector('.rc'),g=it.ings[+r.dataset.k],v=rcost(g),check=unitCheck(g);el.innerHTML=isFinite(v)?brl(v):'<span class="warn" title="'+esc(check.message)+'">⚠ '+(check.type==='insufficient'?'compra insuficiente':check.type==='units'?'unidades incompatíveis':check.type==='purchase'?'informe a compra':'quantidade inválida')+'</span>'});
   const m=$('#r-msg'),status=$('#r-charge-status'),chargeValues=[['r-charge-unit',c.luc],['r-charge-portion-price',c.ad*q],['r-charge-portion-profit',c.luc*q],['r-charge-batch-price',c.ad*rend],['r-charge-batch-profit',c.luc*rend]];
   chargeValues.forEach(([id,v])=>{const e=$('#'+id);if(e){e.textContent=brl(v);e.classList.toggle('loss',v<-.005);e.classList.toggle('good',v>=-.005)}});
   set('r-charge-margin',pc(c.mg));const marginEl=$('#r-charge-margin');if(marginEl){marginEl.classList.toggle('loss',c.luc<-.005);marginEl.classList.toggle('warn',c.luc>=-.005&&c.mg<num(S.cfg.lucro)-.05);marginEl.classList.toggle('good',c.mg>=num(S.cfg.lucro)-.05)}
@@ -1543,7 +1552,7 @@ $('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||!t.data
       if(k===it.ings.length-1)it.ings.push(newIng())}
   }else if(['uso','uun','qtd','un','perda'].includes(t.dataset.g)){
     const efg=eff(g),u=g.uun||efg.un;
-    if(FAM[u]&&FAM[u]===FAM[efg.un]){const limite=num(efg.qtd)*FAC[efg.un]*(1-Math.min(num(g.perda),95)/100)/FAC[u];if(num(g.uso)>limite+1e-9){g.uso=limite;const campo=t.closest('[data-k]').querySelector('[data-g="uso"]');if(campo)campo.value=String(limite);toast('Consumo limitado à quantidade comprada. Aumente a quantidade da embalagem se precisar usar mais.')}}
+    if(FAM[u]&&FAM[u]===FAM[efg.un]){const limite=num(efg.qtd)*FAC[efg.un]*(1-Math.min(Math.max(num(g.perda),0),95)/100)/FAC[u];if(num(g.uso)>limite+1e-9){g.uso=limite;const campo=t.closest('[data-k]').querySelector('[data-g="uso"]');if(campo)campo.value=String(limite);toast('Quantidade ajustada ao limite comprado ('+limite.toLocaleString('pt-BR',{maximumFractionDigits:3})+' '+u+').')}}
   }
   renderEd();save()});
 $('#ed').addEventListener('click',e=>{const it=cur(),t=e.target;if(!it)return;
