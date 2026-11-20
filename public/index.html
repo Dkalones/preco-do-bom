@@ -1651,6 +1651,29 @@ function demo(){
   ings:[...massaChurros(),g('Leite condensado',900,'g'),g('Chocolate em pó',120,'g'),
    g('Creme de leite',200,'g'),...finalizarChurros()]
  };
+ // Biblioteca modular de fichas: cada componente é um lote reutilizável.
+ const component=(key,name,type,ings)=>({id:'demo-'+key,name,type,ings,editing:false});
+ S.components=S.components.filter(c=>!String(c.id).startsWith('demo-'));
+ const modules=[
+  component('massa-coxinha','Massa base de coxinha','Massa',massaCoxinha()),
+  component('recheio-frango','Recheio de frango temperado','Recheio',[g('Peito de frango',1500,'g',8),...baseRecheio()]),
+  component('recheio-catupiry','Recheio de frango com catupiry','Recheio',[g('Peito de frango',1350,'g',8),...baseRecheio(),g('Cream cheese',650,'g')]),
+  component('recheio-carne-seca','Recheio cremoso de carne seca','Recheio',[g('Carne seca dessalgada',1400,'g',5),...baseRecheio(),g('Pimentão',150,'g'),g('Cream cheese',400,'g')]),
+  component('empanamento','Empanamento tradicional','Finalização',empanar()),
+  component('massa-churros','Massa base de mini churros','Massa',massaChurros()),
+  component('doce-leite','Recheio de doce de leite','Recheio',[g('Doce de leite',1200,'g')]),
+  component('chocolate','Recheio cremoso de chocolate','Recheio',[g('Chocolate ao leite',750,'g'),g('Creme de leite',300,'g'),g('Chocolate em pó',80,'g')]),
+  component('brigadeiro','Recheio de brigadeiro','Recheio',[g('Leite condensado',900,'g'),g('Chocolate em pó',120,'g'),g('Creme de leite',200,'g')]),
+  component('final-churros','Finalização de açúcar e canela','Finalização',finalizarChurros())
+ ];
+ S.components.push(...modules);
+ const use=(...keys)=>keys.map(key=>({id:'demo-'+key,qty:1}));
+ coxinha.ings=[];coxinha.componentUses=use('massa-coxinha','recheio-frango','empanamento');
+ coxinhaCatupiry.ings=[];coxinhaCatupiry.componentUses=use('massa-coxinha','recheio-catupiry','empanamento');
+ coxinhaCarneSeca.ings=[];coxinhaCarneSeca.componentUses=use('massa-coxinha','recheio-carne-seca','empanamento');
+ churrosDoce.ings=[];churrosDoce.componentUses=use('massa-churros','doce-leite','final-churros');
+ churrosChocolate.ings=[];churrosChocolate.componentUses=use('massa-churros','chocolate','final-churros');
+ churrosBrigadeiro.ings=[];churrosBrigadeiro.componentUses=use('massa-churros','brigadeiro','final-churros');
  const exemplos=[
   'x-burguer','coxinha tradicional (lote de 100 un.)',
   'mini churros com doce de leite (lote de 200 un.)',
