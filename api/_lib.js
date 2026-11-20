@@ -12,4 +12,4 @@ export const rdp=async path=>{
 };
 export const wr=(path,obj)=>put(`${PFX}/${path}`,JSON.stringify(obj),{access:ACC,addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',token:TOKEN});
 
-export async function auth(){return 'local';}
+export async function auth(req,res){if(!TOKEN){res.status(503).json({error:'Blob não configurado. Conecte um Blob Store ao projeto e disponibilize BLOB_READ_WRITE_TOKEN.'});return null;}return 'local';}
