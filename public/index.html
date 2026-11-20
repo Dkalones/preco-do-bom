@@ -1397,16 +1397,16 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&S._dirty)d
 const tip=t=>`<span class="inf" tabindex="0" data-tip="${t}">i</span>`;
 const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
 const newIng=()=>({n:'',preco:0,qtd:1,un:'g',uso:0,uun:'g',perda:0});
-const FAM={g:'m',kg:'m',ml:'v',L:'v',un:'u'},FAC={g:1,kg:1000,ml:1,L:1000,un:1},UN=['g','kg','ml','L','un'];
+const FAM={mg:'m',g:'m',kg:'m',ml:'v',L:'v',un:'u',dúzia:'u'},FAC={mg:0.001,g:1,kg:1000,ml:1,L:1000,un:1,dúzia:12},UN=['mg','g','kg','ml','L','un','dúzia'];
 const eff=g=>{const l=g.n&&S.lib[g.n.trim().toLowerCase()];return l?{...g,preco:l.preco,qtd:l.qtd,un:l.un}:g};
-function rcost(g){const e=eff(g),u=g.uun||e.un;if(FAM[u]!==FAM[e.un])return NaN;const q=num(e.qtd)*FAC[e.un];if(q<=0)return 0;return num(e.preco)/q*num(g.uso)*FAC[u]/(1-Math.min(num(g.perda),95)/100)}
+function rcost(g){const e=eff(g),u=g.uun||e.un;if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return NaN;const q=num(e.qtd)*FAC[e.un];if(q<=0)return 0;return num(e.preco)/q*num(g.uso)*FAC[u]/(1-Math.min(num(g.perda),95)/100)}
 const opts=v=>UN.map(u=>`<option ${u===v?'selected':''}>${u}</option>`).join('');
 function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <div><label>Ingrediente ${tip('Digite o nome. Se você já usou esse ingrediente antes, o preço é preenchido sozinho.')}</label><input list="dl" data-g="n" value="${esc(g.n)}" placeholder="Digite ou escolha da lista"></div>
  <div><label>Preço pago R$ ${tip('Quanto você pagou na compra completa. Ex.: R$ 38 por 1 kg de carne.')}</label><input type="number" min="0" step="0.01" data-g="preco" value="${e.preco}"></div>
- <div><label>Qtd. comprada ${tip('A quantidade que veio nessa compra. Ex.: 1 (com a unidade kg).')}</label><input type="number" min="0" step="any" data-g="qtd" value="${e.qtd}"></div>
+ <div><label>Qtd. comprada ${tip('A quantidade que veio nessa compra. Ex.: 1 kg, 500 g, 2 L ou 1 dúzia.')}</label><input type="number" min="0" step="any" data-g="qtd" value="${e.qtd}"></div>
  <div><label>Unid.</label><select data-g="un">${opts(e.un)}</select></div>
- <div><label>Qtd. usada ${tip('Quanto você usa na receita. Pode ser outra unidade: comprou em kg e usa em g.')}</label><input type="number" min="0" step="any" data-g="uso" value="${g.uso}"></div>
+ <div><label>Qtd. usada ${tip('Quanto você usa na receita. Pode usar unidade equivalente: comprou em kg e usa em g, ou comprou uma dúzia e usa unidades.')}</label><input type="number" min="0" step="any" data-g="uso" value="${g.uso}"></div>
  <div><label>Unid.</label><select data-g="uun">${opts(g.uun||e.un)}</select></div>
  <div><label>Perda % ${tip('O que se perde no preparo (casca, osso, aparas). Ex.: 10% de perda.')}</label><input type="number" min="0" max="95" data-g="perda" value="${g.perda||0}"></div>
  <div><label>Custo ${tip('Quanto esse ingrediente custa na receita, já considerando a perda.')}</label><div class="rc" style="padding:8px 0;font-weight:600"></div></div>
