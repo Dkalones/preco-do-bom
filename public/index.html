@@ -1134,6 +1134,8 @@ footer{color:#849084}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+
+.component-card{border:1px solid #dce8e2}.component-head,.component-manage-head,.component-use,.component-add{display:flex;align-items:center;justify-content:space-between;gap:12px}.component-head h2{margin-bottom:4px}.component-use-list{display:grid;gap:8px;margin:14px 0}.component-use{padding:10px 12px;border:1px solid #e5ece8;border-radius:12px;background:#fbfdfb}.component-use>div{flex:1}.component-use small,.component-manage small{display:block;color:#718078;font-size:12px;margin-top:3px}.component-use label{font-size:12px;color:#66756d}.component-use input{display:block;width:100px;margin-top:4px}.component-add select{flex:1;min-width:0}.component-library{margin-top:14px;border-top:1px solid #e5ece8;padding-top:12px}.component-manage{padding:10px 0;border-bottom:1px solid #edf1ee}.component-manage-head>div{flex:1}.component-edit{padding:12px;background:#f7faf8;border-radius:10px;margin-top:8px}.component-ingredients{display:grid;gap:6px;margin:10px 0}.component-ing{display:grid;grid-template-columns:1.4fr .8fr .8fr .55fr .8fr .55fr auto;gap:6px}.component-ing input,.component-ing select{min-width:0;width:100%}.component-edit .g2{margin:10px 0}@media(max-width:700px){.component-head,.component-use,.component-add{align-items:stretch;flex-direction:column}.component-use input{width:100%}.component-ing{grid-template-columns:1fr 1fr}.component-ing .x{grid-column:auto}}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1352,6 +1354,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const num=v=>parseFloat(String(v).replace(',','.'))||0;
 let S={cfg:{fixo:15,imp:8,lucro:20,deliv:0,cartao:2.9,desc:0,fm:'%',dm:'%'},lib:{},items:[],sel:null};
 try{const r=localStorage.getItem('pdb');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+S.components=Array.isArray(S.components)?S.components:[];
 const legacyCount=S.items.length;S.items=S.items.filter(it=>(it.nome||'').trim().toLowerCase()!=='x-burguer');if(S.items.length!==legacyCount&&!S.items.some(it=>it.id===S.sel))S.sel=S.items[0]?.id||null;
 
 const persist=()=>{try{localStorage.setItem('pdb',JSON.stringify(S))}catch(e){}};
@@ -1383,8 +1386,16 @@ function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <div><label>Perda % ${tip('O que se perde no preparo (casca, osso, aparas). Ex.: 10% de perda.')}</label><input type="number" min="0" max="95" data-g="perda" value="${g.perda||0}"></div>
  <div><label>Custo ${tip('Quanto esse ingrediente custa na receita, já considerando a perda.')}</label><div class="rc" style="padding:8px 0;font-weight:600"></div></div>
  <button class="x" data-del="${k}" title="Remover">✕</button></div>`}
+function componentCost(c){return (c?.ings||[]).reduce((a,g)=>{const v=rcost(g);return a+(isFinite(v)?v:0)},0)}
+function usedComponents(it){return Array.isArray(it.componentUses)?it.componentUses:[]}
+function componentTotal(it){return usedComponents(it).reduce((a,u)=>{const c=S.components.find(x=>x.id===u.id);return a+(c?componentCost(c)*Math.max(0,num(u.qty)):0)},0)}
+function componentRows(it){return `<div class="card component-card"><div class="component-head"><div><h2>Componentes reutilizáveis</h2><p class="tip">Massas, recheios e finalizações podem ser cadastrados uma vez e usados em várias fichas. Alterar um componente atualiza todos os produtos vinculados.</p></div><button type="button" id="newComponent">+ Criar componente</button></div>
+  <div class="component-use-list">${usedComponents(it).map((u,i)=>{const c=S.components.find(x=>x.id===u.id);return c?`<div class="component-use" data-use="${i}"><div><b>${esc(c.name)}</b><small>${esc(c.type||'Componente')} · Custo do lote: ${brl(componentCost(c))}</small></div><label>Lotes usados <input type="number" min="0" step="0.01" data-use-qty="${i}" value="${u.qty??1}"></label><b>${brl(componentCost(c)*num(u.qty))}</b><button type="button" class="x" data-remove-use="${i}">✕</button></div>`:''}).join('')}</div>
+  <div class="component-add"><select id="componentPicker"><option value="">Selecionar componente da biblioteca…</option>${S.components.filter(c=>!usedComponents(it).some(u=>u.id===c.id)).map(c=>`<option value="${esc(c.id)}">${esc(c.name)} — ${esc(c.type||'Componente')}</option>`).join('')}</select><button type="button" id="attachComponent" ${S.components.length?'':'disabled'}>Vincular ao produto</button></div>
+  <details class="component-library"><summary>Gerenciar biblioteca (${S.components.length})</summary>${S.components.map(c=>`<div class="component-manage" data-component="${esc(c.id)}"><div class="component-manage-head"><div><b>${esc(c.name)}</b><small>${esc(c.type||'Componente')} · ${(c.ings||[]).length} ingredientes · ${brl(componentCost(c))}/lote</small></div><button type="button" data-edit-component="${esc(c.id)}">Editar</button><button type="button" class="x" data-delete-component="${esc(c.id)}">✕</button></div>${c.editing?`<div class="component-edit"><div class="g2"><label>Nome<input data-cfield="name" value="${esc(c.name)}"></label><label>Tipo<input data-cfield="type" value="${esc(c.type||'')}</label></div><div class="component-ingredients">${(c.ings||[]).map((g,k)=>`<div class="component-ing" data-cing="${k}"><input data-cg="n" placeholder="Ingrediente" value="${esc(g.n)}"><input data-cg="preco" type="number" step="0.01" placeholder="Preço" value="${eff(g).preco}"><input data-cg="qtd" type="number" step="any" placeholder="Qtd. compra" value="${eff(g).qtd}"><select data-cg="un">${opts(eff(g).un)}</select><input data-cg="uso" type="number" step="any" placeholder="Qtd. usada" value="${g.uso}"><select data-cg="uun">${opts(g.uun||eff(g).un)}</select><button type="button" class="x" data-remove-cing="${k}">✕</button></div>`).join('')}</div><button type="button" data-add-cing>+ Ingrediente</button><button type="button" data-save-component>Concluir edição</button></div>`:''}</div>`).join('')||'<p class="tip">Sua biblioteca ainda está vazia. Crie componentes para reaproveitar receitas-base.</p>'}</details></div>`}
 function calc(it){
-  const ing=it.ings.reduce((a,i)=>{const c=rcost(i);return a+(isFinite(c)?c:0)},0);
+  const direct=it.ings.reduce((a,i)=>{const c=rcost(i);return a+(isFinite(c)?c:0)},0);
+  const ing=direct+componentTotal(it);
   const total=ing+num(it.emb)+num(it.mo)+num(it.gas)+num(it.maquina), un=total/(num(it.rend)||1)+(S.cfg.fm==='R$'?num(S.cfg.fixo):0);
   const {fixo,imp,lucro,cartao}=S.cfg,fp=S.cfg.fm==='R$'?0:num(fixo),tx=fp+num(imp)+num(cartao),perc=tx+num(lucro);
   const sug=perc<100?un/(1-perc/100):NaN,dv=perc+num(S.cfg.deliv),sugD=dv<100?un/(1-dv/100):NaN;
@@ -1418,6 +1429,7 @@ function renderEd(){
     <datalist id="dl">${Object.values(S.lib).map(l=>`<option value="${esc(l.n)}">`).join('')}</datalist>${it.ings.map(rowHtml).join('')}
     <button id="addIng">+ Adicionar ingrediente</button>
     <p class="tip">⚡ Automático: ingrediente já usado antes preenche o preço sozinho, e ao mudar o preço ele atualiza em todos os itens. Compre em kg e use em g — a conversão é feita sozinha. <b>Perda %</b> = casca, osso, aparas.</p></div>
+  ${componentRows(it)}
   <div class="res" id="pricing-result"><h2>Precificação</h2><div class="loss-banner">⚠ ATENÇÃO: ESTE PRODUTO ESTÁ SENDO VENDIDO COM PREJUÍZO</div>
     <div class="sub">Visualizar preço em</div>
     <select class="mode-select" data-f="priceMode" aria-label="Unidade de precificação"><option value="unidade" ${it.priceMode==='unidade'?'selected':''}>${esc(it.unidadeNome||'Unidade')} individual</option><option value="porcao" ${(it.priceMode||(num(it.porcao)>1?'porcao':'unidade'))==='porcao'?'selected':''}>${esc(it.porcaoNome||'Porção')}</option><option value="lote" ${it.priceMode==='lote'?'selected':''}>${esc(it.loteNome||'Lote de produção')} completo</option></select>
@@ -1502,18 +1514,35 @@ $('#exp').onclick=e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k
 $('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',loteNome:'Lote de produção',unidadeNome:'unidades',porcaoNome:'porção',rend:1,porcao:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
 $('#list').onclick=e=>{const d=e.target.closest('[data-id]');if(d){S.sel=d.dataset.id;renderList();renderEd();$('#ed').scrollIntoView({behavior:'smooth'})}};
 $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
+  if(t.dataset.useQty!==undefined){it.componentUses=it.componentUses||[];it.componentUses[+t.dataset.useQty].qty=t.value;refresh();return}
+  const comp=t.closest('[data-component]')?S.components.find(c=>c.id===t.closest('[data-component]').dataset.component):null;
+  if(comp&&t.dataset.cfield){comp[t.dataset.cfield]=t.value;refresh();return}
+  if(comp&&t.dataset.cg){const g=comp.ings[+t.closest('[data-cing]').dataset.cing];g[t.dataset.cg]=t.value;if(['preco','qtd','un'].includes(t.dataset.cg)&&g.n.trim()){const b={...eff(g),[t.dataset.cg]:t.value};S.lib[g.n.trim().toLowerCase()]={n:g.n.trim(),preco:b.preco,qtd:b.qtd,un:b.un}}refresh();return}
   if(t.dataset.f)it[t.dataset.f]=t.value;
   else if(t.dataset.t)it.tiers[+t.closest('[data-ti]').dataset.ti][t.dataset.t]=t.value;
   else if(t.dataset.g){const g=it.ings[+t.closest('[data-k]').dataset.k],f=t.dataset.g;
     if(['preco','qtd','un'].includes(f)&&g.n.trim()){const b={...eff(g),[f]:t.value};S.lib[g.n.trim().toLowerCase()]={n:g.n.trim(),preco:b.preco,qtd:b.qtd,un:b.un}}else g[f]=t.value}
   refresh()});
-$('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||t.dataset.g!=='n')return;
+$('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it)return;
+  const cr=t.closest('[data-component]'),comp=cr?S.components.find(c=>c.id===cr.dataset.component):null;
+  if(comp&&t.dataset.cg==='n'){const g=comp.ings[+t.closest('[data-cing]').dataset.cing],key=g.n.trim().toLowerCase();if(key){const l=S.lib[key];if(l){g.preco=l.preco;g.qtd=l.qtd;g.un=l.un;g.uun=g.uun|| (l.un==='kg'?'g':l.un==='L'?'ml':l.un)}}save();renderEd();return}
+  if(t.dataset.g!=='n')return;
   const k=+t.closest('[data-k]').dataset.k,g=it.ings[k],key=g.n.trim().toLowerCase();
   if(key){if(!S.lib[key]&&num(g.preco)>0)S.lib[key]={n:g.n.trim(),preco:g.preco,qtd:g.qtd,un:g.un};
     const l=S.lib[key];if(l&&!g.uso)g.uun=l.un==='kg'?'g':l.un==='L'?'ml':l.un;
     if(k===it.ings.length-1)it.ings.push(newIng())}
   renderEd();save()});
 $('#ed').addEventListener('click',e=>{const it=cur(),t=e.target;if(!it)return;
+  const compWrap=t.closest('[data-component]'),comp=compWrap?S.components.find(c=>c.id===compWrap.dataset.component):null;
+  if(t.id==='newComponent'){const name=prompt('Nome do componente (ex.: Massa base de coxinha):');if(name&&name.trim()){S.components.push({id:'c'+Date.now(),name:name.trim(),type:'Componente',ings:[newIng()]});renderEd();save()}return}
+  if(t.id==='attachComponent'){const id=$('#componentPicker')?.value;if(id){it.componentUses=it.componentUses||[];it.componentUses.push({id,qty:1});renderEd();save()}return}
+  if(t.dataset.removeUse!==undefined){it.componentUses.splice(+t.dataset.removeUse,1);renderEd();save();return}
+  if(t.dataset.editComponent){const c=S.components.find(x=>x.id===t.dataset.editComponent);if(c){c.editing=!c.editing;renderEd();save()}return}
+  if(t.dataset.deleteComponent&&confirm('Excluir este componente da biblioteca? Ele será desvinculado dos produtos, sem apagar os demais ingredientes.')){const id=t.dataset.deleteComponent;S.components=S.components.filter(c=>c.id!==id);S.items.forEach(x=>x.componentUses=(x.componentUses||[]).filter(u=>u.id!==id));renderEd();save();return}
+  if(comp&&t.dataset.addCing!==undefined){comp.ings.push(newIng());renderEd();save();return}
+  if(comp&&t.dataset.removeCing!==undefined){comp.ings.splice(+t.dataset.removeCing,1);renderEd();save();return}
+  if(comp&&t.dataset.saveComponent!==undefined){comp.editing=false;renderEd();save();return}
+  if(comp)return;
   if(t.id==='addIng'){it.ings.push(newIng());renderEd()}
   else if(t.dataset.del!==undefined){it.ings.splice(+t.dataset.del,1);if(!it.ings.length)it.ings.push(newIng());renderEd()}
   else if(t.dataset.act==='addtier'){const l=it.tiers[it.tiers.length-1]||{q:25,d:0};it.tiers.push({q:num(l.q)*2,d:num(l.d)+5});renderEd()}
