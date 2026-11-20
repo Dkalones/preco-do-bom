@@ -931,6 +931,52 @@ button:focus-visible,.menu-n button:focus-visible{outline:3px solid rgba(29,190,
 }
 @media(prefers-reduced-motion:reduce){.menu-n button{transition:none}}
 
+
+/* Nova organização da área de produtos: seleção acima, edição abaixo */
+@media(min-width:1181px){
+  .split{grid-template-columns:minmax(0,1fr);gap:16px}
+  .split>.card{position:static;max-height:none;overflow:visible;padding:16px 18px}
+  .split>.card h2{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  #list{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:10px;max-height:none;overflow:visible;margin:0}
+  #list>.item{margin:0;min-height:86px;padding:13px 14px;align-items:center}
+  #list>.item>div:first-child{flex:1;min-width:0}
+  #list>.item b{font-size:14px;line-height:1.35}
+  #list>.item small{display:block;margin-top:5px}
+  #list>.item .pr{min-width:105px;font-size:14px}
+  #ed{grid-template-columns:minmax(0,1fr) minmax(350px,390px);gap:18px;align-items:start}
+  #ed>.res{position:sticky;top:18px;max-height:none;overflow:visible;align-self:start}
+}
+@media(min-width:1500px){
+  .split{gap:18px}
+  #list{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  #list>.item{min-height:92px;padding:14px 16px}
+  #ed{grid-template-columns:minmax(0,1fr) minmax(370px,410px);gap:20px}
+  #ed>.card{padding:21px}
+  #ed>.res{padding:21px}
+}
+@media(min-width:1025px) and (max-width:1180px){
+  .split{grid-template-columns:minmax(205px,230px) minmax(0,1fr);gap:12px}
+  .split>.card{position:static;max-height:none;overflow:visible;padding:13px}
+  #list{max-height:none;overflow:visible}
+  #list>.item{align-items:flex-start;padding:10px;gap:6px}
+  #list>.item .pr{font-size:12px}
+  #ed{grid-template-columns:minmax(0,1fr)}
+  #ed>.res{grid-column:1;grid-row:auto;position:static;max-height:none;overflow:visible}
+}
+@media(max-width:1024px){
+  .split{grid-template-columns:minmax(0,1fr)}
+  .split>.card{position:static;max-height:none;overflow:visible}
+  #list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;max-height:none;overflow:visible}
+  #list>.item{margin:0;min-height:78px}
+  #ed{grid-template-columns:minmax(0,1fr)}
+  #ed>.res{grid-column:1;grid-row:auto;position:static;max-height:none;overflow:visible}
+}
+@media(max-width:600px){
+  #list{grid-template-columns:minmax(0,1fr)}
+  #list>.item{min-height:0}
+  #ed .g2{grid-template-columns:minmax(0,1fr)}
+}
+
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
