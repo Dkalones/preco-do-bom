@@ -1399,7 +1399,7 @@ const r90=x=>{let r=Math.ceil(x)-.1;if(r<x)r+=1;return r};
 const newIng=()=>({n:'',preco:0,qtd:1,un:'g',uso:0,uun:'g',perda:0});
 const FAM={mg:'m',g:'m',kg:'m',ml:'v',L:'v',un:'u',dúzia:'u'},FAC={mg:0.001,g:1,kg:1000,ml:1,L:1000,un:1,dúzia:12},UN=['mg','g','kg','ml','L','un','dúzia'];
 const eff=g=>{const l=g.n&&S.lib[g.n.trim().toLowerCase()];return l?{...g,preco:l.preco,qtd:l.qtd,un:l.un}:g};
-function rcost(g){const e=eff(g),u=g.uun||e.un;if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return NaN;const q=num(e.qtd)*FAC[e.un];if(q<=0)return 0;return num(e.preco)/q*num(g.uso)*FAC[u]/(1-Math.min(num(g.perda),95)/100)}
+function rcost(g){const e=eff(g),u=g.uun||e.un;if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return NaN;const comprado=num(e.qtd)*FAC[e.un],perda=Math.min(num(g.perda),95)/100,consumo=num(g.uso)*FAC[u]/(1-perda);if(comprado<=0||consumo<0||consumo>comprado+1e-9)return NaN;return num(e.preco)/comprado*consumo}
 const opts=v=>UN.map(u=>`<option ${u===v?'selected':''}>${u}</option>`).join('');
 function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <div><label>Ingrediente ${tip('Digite o nome. Se você já usou esse ingrediente antes, o preço é preenchido sozinho.')}</label><input list="dl" data-g="n" value="${esc(g.n)}" placeholder="Digite ou escolha da lista"></div>
@@ -1535,11 +1535,16 @@ $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
   else if(t.dataset.g){const g=it.ings[+t.closest('[data-k]').dataset.k],f=t.dataset.g;
     if(['preco','qtd','un'].includes(f)&&g.n.trim()){const b={...eff(g),[f]:t.value};S.lib[g.n.trim().toLowerCase()]={n:g.n.trim(),preco:b.preco,qtd:b.qtd,un:b.un}}else g[f]=t.value}
   refresh()});
-$('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||t.dataset.g!=='n')return;
+$('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||!t.dataset.g)return;
   const k=+t.closest('[data-k]').dataset.k,g=it.ings[k],key=g.n.trim().toLowerCase();
-  if(key){if(!S.lib[key]&&num(g.preco)>0)S.lib[key]={n:g.n.trim(),preco:g.preco,qtd:g.qtd,un:g.un};
-    const l=S.lib[key];if(l&&!g.uso)g.uun=l.un==='kg'?'g':l.un==='L'?'ml':l.un;
-    if(k===it.ings.length-1)it.ings.push(newIng())}
+  if(t.dataset.g==='n'){
+    if(key){if(!S.lib[key]&&num(g.preco)>0)S.lib[key]={n:g.n.trim(),preco:g.preco,qtd:g.qtd,un:g.un};
+      const l=S.lib[key];if(l&&!g.uso)g.uun=l.un==='kg'?'g':l.un==='L'?'ml':l.un;
+      if(k===it.ings.length-1)it.ings.push(newIng())}
+  }else if(['uso','uun','qtd','un','perda'].includes(t.dataset.g)){
+    const efg=eff(g),u=g.uun||efg.un;
+    if(FAM[u]&&FAM[u]===FAM[efg.un]){const limite=num(efg.qtd)*FAC[efg.un]*(1-Math.min(num(g.perda),95)/100)/FAC[u];if(num(g.uso)>limite+1e-9){g.uso=limite;const campo=t.closest('[data-k]').querySelector('[data-g="uso"]');if(campo)campo.value=String(limite);toast('Consumo limitado à quantidade comprada. Aumente a quantidade da embalagem se precisar usar mais.')}}
+  }
   renderEd();save()});
 $('#ed').addEventListener('click',e=>{const it=cur(),t=e.target;if(!it)return;
   if(t.id==='addIng'){it.ings.push(newIng());renderEd()}
@@ -1575,13 +1580,13 @@ function demo(){
  // Valores ilustrativos. Nunca substitui preços de insumos que o usuário já cadastrou.
  const L=(n,preco,qtd,un)=>{const k=n.toLowerCase();if(!S.lib[k])S.lib[k]={n,preco,qtd,un}};
  [
-  ['Farinha de trigo',6.5,1,'kg'],['Leite integral',5.5,1,'L'],['Água',12,1000,'L'],
-  ['Margarina',12,0.5,'kg'],['Peito de frango',18,1,'kg'],['Requeijão cremoso',9,0.2,'kg'],
-  ['Farinha de rosca',8,0.5,'kg'],['Ovos',18,12,'un'],['Cebola',5,1,'kg'],
+  ['Farinha de trigo',6.5,2,'kg'],['Leite integral',5.5,2,'L'],['Água',12,1000,'L'],
+  ['Margarina',12,0.5,'kg'],['Peito de frango',18,2,'kg'],['Requeijão cremoso',9,0.5,'kg'],
+  ['Farinha de rosca',8,1,'kg'],['Ovos',18,12,'un'],['Cebola',5,1,'kg'],
   ['Alho',28,1,'kg'],['Tomate',7,1,'kg'],['Cheiro-verde',3,1,'un'],
   ['Caldo de galinha',3.5,6,'un'],['Sal',3,1,'kg'],['Óleo de soja',8.5,0.9,'L'],
   ['Doce de leite',14,0.4,'kg'],['Açúcar',4.5,1,'kg'],['Canela em pó',5,0.05,'kg'],
-  ['Carne seca dessalgada',38,1,'kg'],['Cream cheese',12,0.3,'kg'],['Pimentão',8,1,'kg'],
+  ['Carne seca dessalgada',38,1,'kg'],['Cream cheese',12,1,'kg'],['Pimentão',8,1,'kg'],
   ['Chocolate ao leite',12,0.5,'kg'],['Creme de leite',4.5,0.2,'kg'],
   ['Chocolate em pó',8,0.2,'kg'],['Leite condensado',7,0.395,'kg'],
   ['Goiabada cremosa',9,0.3,'kg']
