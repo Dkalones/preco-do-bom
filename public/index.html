@@ -1388,12 +1388,12 @@ function rowHtml(g,k){const e=eff(g);return `<div class="ing" data-k="${k}">
  <button class="x" data-del="${k}" title="Remover">✕</button></div>`}
 const COMPONENT_UNITS=['lote','g','kg','ml','L','un'];
 const componentFactor=(from,to)=>{if(from==='lote'&&to==='lote')return 1;if(FAM[from]!==FAM[to]||!FAC[from]||!FAC[to])return NaN;return FAC[from]/FAC[to]};
-function componentCost(c){return (c?.ings||[]).reduce((a,g)=>{const v=rcost(g);return a+(isFinite(v)?v:0)},0)}
+function componentCost(c){const rows=(c?.ings||[]).filter(g=>g.n);if(rows.some(g=>!isFinite(rcost(g))))return NaN;return rows.reduce((a,g)=>a+rcost(g),0)}
 function componentYield(c){return Math.max(0,num(c?.yieldQty)||1)}
 function componentUnitCost(c){return componentCost(c)/componentYield(c)}
 function usedComponents(it){return Array.isArray(it.componentUses)?it.componentUses:[]}
 function componentUseCost(c,u){const factor=componentFactor(u.unit||'lote',c.yieldUnit||'lote');if(!isFinite(factor))return NaN;return componentUnitCost(c)*Math.max(0,num(u.qty))*factor}
-function componentTotal(it){return usedComponents(it).reduce((a,u)=>{const c=S.components.find(x=>x.id===u.id);if(!c)return a;const v=componentUseCost(c,u);return a+(isFinite(v)?v:0)},0)}
+function componentTotal(it){let total=0;for(const u of usedComponents(it)){const c=S.components.find(x=>x.id===u.id);if(!c)continue;const v=componentUseCost(c,u);if(!isFinite(v))return NaN;total+=v}return total}
 function invalidComponentUses(it){return usedComponents(it).filter(u=>{const c=S.components.find(x=>x.id===u.id);return c&&!isFinite(componentUseCost(c,u))})}
 function invalidComponentIngredients(c){return (c?.ings||[]).filter(g=>g.n&&!isFinite(rcost(g)))}
 function itemIngredientEntries(it){const out=(it.ings||[]).map(g=>({g,source:'Direto'}));usedComponents(it).forEach(u=>{const c=S.components.find(x=>x.id===u.id);if(c){const factor=componentFactor(u.unit||'lote',c.yieldUnit||'lote');const amount=componentUseCost(c,u);(c.ings||[]).forEach(g=>out.push({g,source:c.name,qty:isFinite(factor)?num(u.qty)*factor/componentYield(c):NaN,cost:isFinite(amount)?rcost(g)*amount/componentCost(c):NaN}))}});return out}
@@ -1534,6 +1534,7 @@ $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
   refresh()});
 $('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it)return;
   const cr=t.closest('[data-component]'),comp=cr?S.components.find(c=>c.id===cr.dataset.component):null;
+  if(comp&&t.dataset.cfield){comp[t.dataset.cfield]=t.value;save();renderEd();return}
   if(comp&&t.dataset.cg==='n'){const g=comp.ings[+t.closest('[data-cing]').dataset.cing],key=g.n.trim().toLowerCase();if(key){const l=S.lib[key];if(l){g.preco=l.preco;g.qtd=l.qtd;g.un=l.un;g.uun=g.uun|| (l.un==='kg'?'g':l.un==='L'?'ml':l.un)}}save();renderEd();return}
   if(t.dataset.g!=='n')return;
   const k=+t.closest('[data-k]').dataset.k,g=it.ings[k],key=g.n.trim().toLowerCase();
