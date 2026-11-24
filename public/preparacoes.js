@@ -84,9 +84,9 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{
  const t=e.target,p=prepById(S._prepSel);if(!p)return;
- if(t.dataset.pf){p[t.dataset.pf]=t.value;save();renderPreparacoes();}
- if(t.dataset.pingField){const g=p.ings[+t.closest('[data-ping]').dataset.ping],f=t.dataset.pingField;g[f]=t.value;if(f==='n'){const key=g.n.trim().toLowerCase();if(S.lib[key])Object.assign(g,S.lib[key],{n:g.n});}save();renderPreparacoes();}
- if(t.dataset.ppartField){p.parts[+t.closest('[data-ppart]').dataset.ppart][t.dataset.ppartField]=t.value;save();renderPreparacoes();}
+ if(t.dataset.pf){p[t.dataset.pf]=t.value;save();}
+ if(t.dataset.pingField){const g=p.ings[+t.closest('[data-ping]').dataset.ping],f=t.dataset.pingField;g[f]=t.value;if(f==='n'){const key=g.n.trim().toLowerCase();if(S.lib[key])Object.assign(g,S.lib[key],{n:g.n});}save();}
+ if(t.dataset.ppartField){p.parts[+t.closest('[data-ppart]').dataset.ppart][t.dataset.ppartField]=t.value;save();}
 });
 document.addEventListener('change',e=>{
  const t=e.target;
