@@ -1599,12 +1599,12 @@ function demo(){
  const frango=put('demo-recheio-frango','Recheio de frango cremoso','Recheio',1,'un',[g('Peito de frango',1500,'g'),g('Requeijão cremoso',350,'g')],[{id:refogado,q:1}]);
  const catupiry=put('demo-recheio-catupiry','Recheio de frango com catupiry','Recheio',1,'un',[g('Peito de frango',1350,'g'),g('Cream cheese',650,'g')],[{id:refogado,q:1}]);
  const carne=put('demo-recheio-carne-seca','Recheio de carne seca cremosa','Recheio',1,'un',[g('Carne seca dessalgada',1400,'g',5),g('Pimentão',150,'g'),g('Cream cheese',400,'g')],[{id:refogado,q:1}]);
- const massaCh=put('demo-massa-mini-churros','Massa de mini churros (receita informada)','Massa',5990,'g',[g('Água',3000,'ml'),g('Farinha de trigo',2000,'g'),g('Açúcar',300,'g'),g('Margarina',300,'g'),g('Sal',60,'g'),g('Essência de baunilha',10,'g'),g('Flocão',320,'g')]);
+ const massaCh=put('demo-massa-mini-churros','Massa de mini churros','Massa',5990,'g',[g('Água',3,'L'),g('Farinha de trigo',2000,'g'),g('Açúcar',300,'g'),g('Margarina',300,'g'),g('Sal',60,'g'),g('Essência de baunilha',10,'g'),g('Flocão',320,'g')]);
  const finaliza=put('demo-finalizacao-churros','Finalização de mini churros','Cobertura',1,'un',[g('Açúcar',350,'g'),g('Canela em pó',30,'g'),g('Óleo de soja',700,'ml')]);
  const doce=put('demo-recheio-doce-leite','Recheio de doce de leite','Recheio',1,'un',[g('Doce de leite',1200,'g')]);
  const choc=put('demo-recheio-chocolate','Recheio de chocolate cremoso','Recheio',1,'un',[g('Chocolate ao leite',750,'g'),g('Creme de leite',300,'g'),g('Chocolate em pó',80,'g')]);
  const brigadeiro=put('demo-recheio-brigadeiro','Recheio de brigadeiro','Recheio',1,'un',[g('Leite condensado',900,'g'),g('Chocolate em pó',120,'g'),g('Creme de leite',200,'g')]);
- const pack=(...ids)=>ids.map(id=>({id,q:1,un:'un'})), chMass=()=>({id:massaCh,q:5990,un:'g'});
+ const pack=(...ids)=>ids.map(id=>({id,q:1,un:'un'})), chMass=()=>({id:massaCh,q:S.preparacoes.find(p=>p.id===massaCh)?.rend||5990,un:'g'});
  const coxinha={id:id+'c1',priceMode:'porcao',loteNome:'Fornada de coxinhas tradicionais',unidadeNome:'coxinhas',porcaoNome:'Caixa com 10',nome:'Coxinha tradicional de frango (100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:12,gas:3,maquina:2,final:'',ings:[],preps:pack(massaC,frango,empanar)};
  const coxinhaCatupiry={id:id+'c2',priceMode:'porcao',loteNome:'Fornada de coxinhas com catupiry',unidadeNome:'coxinhas',porcaoNome:'Caixa com 10',nome:'Coxinha de frango com catupiry (100 un.)',cat:'Salgados',rend:100,porcao:10,emb:8,mo:13,gas:3,maquina:2,final:'',ings:[],preps:pack(massaC,catupiry,empanar)};
  const coxinhaCarneSeca={id:id+'c3',priceMode:'porcao',loteNome:'Fornada de coxinhas de carne seca',unidadeNome:'coxinhas',porcaoNome:'Caixa com 10',nome:'Coxinha de carne seca cremosa (100 un.)',cat:'Salgados',rend:100,porcao:10,emb:9,mo:15,gas:3.2,maquina:2.5,final:'',ings:[],preps:pack(massaC,carne,empanar)};
