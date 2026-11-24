@@ -97,7 +97,7 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset.prepField==='q'){const it=cur(),x=it?.preps?.[+t.closest('[data-prep-row]').dataset.prepRow];if(x){x.q=t.value;refresh();}}});
 const side=[...document.querySelectorAll('.side .nav-group')].find(g=>g.textContent.includes('PRODUÇÃO'));
-if(side){const b=document.createElement('button');b.dataset.v='preparacoes';b.innerHTML='<span>Preparações</span>';b.style.cssText='display:flex;align-items:center;gap:12px';const ref=side.querySelector('[data-v="insumos"]');ref?.insertAdjacentElement('beforebegin',b);b.addEventListener('click',()=>show('preparacoes'));}
+if(side){const b=document.createElement('button');b.dataset.v='preparacoes';b.innerHTML='<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;font-size:17px;line-height:1">🥣</span><span>Preparações</span>';b.style.cssText='display:flex;align-items:center;gap:12px';const ref=side.querySelector('[data-v="insumos"]');ref?.insertAdjacentElement('beforebegin',b);b.addEventListener('click',()=>show('preparacoes'));}
 const view=document.createElement('section');view.className='view';view.id='v-preparacoes';view.hidden=true;document.querySelector('.content').appendChild(view);
 
 })();
