@@ -15,8 +15,8 @@ function prepCost(id, stack=[]) {
   (p.ings||[]).forEach(g=>{const c=rcost(g);if(Number.isFinite(c))total+=c;else valid=false;});
   (p.parts||[]).forEach(x=>{
     const child=prepCost(x.id,[...stack,id]), cp=prepById(x.id);
-    if(!child.valid || !cp || fam(p.un)!==fam(cp.un)){valid=false;return;}
-    total += child.cost * num(x.q) * FAC[cp.un] / FAC[p.un];
+    if(!child.valid || !cp){valid=false;return;}
+    total += child.unitCost * num(x.q);
   });
   const yieldQty=num(p.rend);
   if(yieldQty<=0)valid=false;
@@ -26,8 +26,8 @@ function usedPrepCost(it) {
   let total=0,valid=true;
   (it.preps||[]).forEach(x=>{
     const p=prepById(x.id),c=prepCost(x.id);
-    if(!p||!c.valid||fam(p.un)!==fam(x.un||p.un)){valid=false;return;}
-    total += c.unitCost*num(x.q)*FAC[x.un||p.un]/FAC[p.un];
+    if(!p||!c.valid){valid=false;return;}
+    total += c.unitCost*num(x.q);
   });
   return {total,valid};
 }
@@ -96,9 +96,8 @@ document.addEventListener('change',e=>{
  if(t.dataset.prepField){const it=cur(),x=it?.preps?.[+t.closest('[data-prep-row]').dataset.prepRow];if(x){x[t.dataset.prepField]=t.value;if(t.dataset.prepField==='id'){const p=prepById(x.id);x.un=p?.un||'g';}save();renderEd();}}
 });
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset.prepField==='q'){const it=cur(),x=it?.preps?.[+t.closest('[data-prep-row]').dataset.prepRow];if(x){x.q=t.value;refresh();}}});
-const side=document.querySelector('.side .nav-group');
-if(side){const b=document.createElement('button');b.dataset.v='preparacoes';b.innerHTML='<span>Preparações</span>';b.style.cssText='display:flex;align-items:center;gap:12px';side.insertBefore(b,side.children[1]||null);b.addEventListener('click',()=>show('preparacoes'));}
+const side=[...document.querySelectorAll('.side .nav-group')].find(g=>g.textContent.includes('PRODUÇÃO'));
+if(side){const b=document.createElement('button');b.dataset.v='preparacoes';b.innerHTML='<span>Preparações</span>';b.style.cssText='display:flex;align-items:center;gap:12px';const ref=side.querySelector('[data-v="insumos"]');ref?.insertAdjacentElement('beforebegin',b);b.addEventListener('click',()=>show('preparacoes'));}
 const view=document.createElement('section');view.className='view';view.id='v-preparacoes';view.hidden=true;document.querySelector('.content').appendChild(view);
-const oldRenderList=renderList;
-renderList=function(){oldRenderList();const k=$p('#kpis');if(k&&S.preparacoes.length){const b=document.createElement('div');b.className='kpi';b.innerHTML='<span>Preparações</span><b>'+S.preparacoes.length+'</b>';k.appendChild(b);}};
+
 })();
