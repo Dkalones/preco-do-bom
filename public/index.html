@@ -1553,8 +1553,8 @@ $('#ed').addEventListener('change',e=>{const it=cur(),t=e.target;if(!it||!t.data
       const l=S.lib[key];if(l&&!g.uso)g.uun=l.un==='kg'?'g':l.un==='L'?'ml':l.un;
       if(k===it.ings.length-1)it.ings.push(newIng())}
   }else if(['uso','uun','qtd','un','perda'].includes(t.dataset.g)){
-    const efg=eff(g),u=g.uun||efg.un;
-    if(FAM[u]&&FAM[u]===FAM[efg.un]){const limite=num(efg.qtd)*FAC[efg.un]*(1-Math.min(Math.max(num(g.perda),0),95)/100)/FAC[u];if(num(g.uso)>limite+1e-9){g.uso=limite;const campo=t.closest('[data-k]').querySelector('[data-g="uso"]');if(campo)campo.value=String(limite);toast('Quantidade ajustada ao limite comprado ('+limite.toLocaleString('pt-BR',{maximumFractionDigits:3})+' '+u+').')}}
+    // A quantidade usada na receita é independente da quantidade de referência da compra.
+    // O custo é calculado proporcionalmente em rcost(), sem limitar o consumo.
   }
   renderEd();save()});
 $('#ed').addEventListener('click',e=>{const it=cur(),t=e.target;if(!it)return;
