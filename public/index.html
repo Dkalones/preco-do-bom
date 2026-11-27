@@ -1402,10 +1402,9 @@ const eff=g=>{const l=g.n&&S.lib[g.n.trim().toLowerCase()];return l?{...g,preco:
 function unitCheck(g){
  const e=eff(g),u=g.uun||e.un;
  if(!FAM[u]||!FAM[e.un]||FAM[u]!==FAM[e.un])return {ok:false,type:'units',message:'Unidades incompatíveis: compare massa com massa, volume com volume ou unidades com unidades.'};
- const comprado=num(e.qtd)*FAC[e.un],uso=num(g.uso)*FAC[u],perda=Math.min(Math.max(num(g.perda),0),95)/100,limite=comprado*(1-perda);
- if(comprado<=0)return {ok:false,type:'purchase',message:'Informe uma quantidade comprada maior que zero.'};
+ const comprado=num(e.qtd)*FAC[e.un],uso=num(g.uso)*FAC[u];
+ if(comprado<=0)return {ok:false,type:'purchase',message:'Informe a quantidade de referência maior que zero.'};
  if(uso<0)return {ok:false,type:'usage',message:'A quantidade usada não pode ser negativa.'};
- if(uso>limite+1e-9)return {ok:false,type:'insufficient',message:'Quantidade insuficiente: você está usando '+g.uso+' '+u+', mas a compra permite até '+(limite/FAC[u]).toLocaleString('pt-BR',{maximumFractionDigits:3})+' '+u+'. Aumente a quantidade comprada.'};
  return {ok:true};
 }
 function rcost(g){const e=eff(g),check=unitCheck(g);if(!check.ok)return NaN;const u=g.uun||e.un,comprado=num(e.qtd)*FAC[e.un],perda=Math.min(Math.max(num(g.perda),0),95)/100,consumo=num(g.uso)*FAC[u]/(1-perda);return num(e.preco)/comprado*consumo}
