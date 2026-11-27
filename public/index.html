@@ -1335,7 +1335,7 @@ footer{color:#849084}
       <div><b>Ficha técnica</b><p class="tip">A receita com quantidades e custos de cada ingrediente. Cada item do site é uma ficha técnica.</p></div>
       <div><b>Perda (fator de correção)</b><p class="tip">O que se perde no preparo, como casca e osso. Você paga por 1 kg, mas aproveita menos.</p></div>
       <div><b>Insumo</b><p class="tip">Qualquer ingrediente ou material que você compra para produzir.</p></div></div>
-      <p style="margin:16px 0 0"><button onclick="demo()">Ver exemplos prontos (coxinhas e mini churros)</button></p></div>
+      <div class="ex" style="margin-top:16px"><button class="p" type="button" id="addBolinhoQueijo">＋ Adicionar bolinho de queijo</button><button class="p" type="button" id="addCroqueteCamarao">＋ Adicionar croquete de camarão</button></div><p class="tip">Cada botão adiciona somente a receita escolhida à sua lista de produtos, sem carregar os outros exemplos.</p></div>
   </section>
   <section class="view" id="v-export" hidden>
     <div class="ph"><div><h1>Exportar</h1><p class="sub2">Baixe sua tabela de preços pronta para usar ou compartilhar.</p></div></div>
@@ -1537,6 +1537,8 @@ $('#exp').onclick=e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k
   try{const [ext,data,nm]=EXP[k]();out((nm||stamp())+ext,data)}catch(err){toast('Erro ao gerar '+k+'. Tente novamente.')}};
 ['fixo','imp','lucro','deliv','cartao','desc'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]??0;e.oninput=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
 ['fm','dm'].forEach(k=>{const e=$('#'+k);e.value=S.cfg[k]||'%';e.onchange=()=>{S.cfg[k]=e.value;refresh();renderList();save()}});
+$('#addBolinhoQueijo').onclick=()=>addSalgadoDemo('bolinho');
+$('#addCroqueteCamarao').onclick=()=>addSalgadoDemo('croquete');
 $('#add').onclick=()=>{show('itens');const it={id:'i'+Date.now(),nome:'',cat:'',loteNome:'Lote de produção',unidadeNome:'unidades',porcaoNome:'porção',rend:1,porcao:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[newIng()]};S.items.push(it);S.sel=it.id;renderList();renderEd();save();$('#ed input')?.focus()};
 $('#list').onclick=e=>{const d=e.target.closest('[data-id]');if(d){S.sel=d.dataset.id;renderList();renderEd();$('#ed').scrollIntoView({behavior:'smooth'})}};
 $('#ed').addEventListener('input',e=>{const it=cur(),t=e.target;if(!it)return;
@@ -1616,7 +1618,23 @@ function demo(){
  S.items=S.items.filter(it=>!exemplos.includes((it.nome||'').trim().toLowerCase()));
  S.items.push(coxinha,coxinhaCatupiry,coxinhaCarneSeca,bolinhoQueijo,croqueteCamarao,churrosDoce,churrosChocolate,churrosBrigadeiro);
  S.sel=coxinha.id;show('itens');renderList();renderEd();save()
-}function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
+}function addSalgadoDemo(tipo){
+ const L=(n,preco,qtd,un)=>{const k=n.toLowerCase();if(!S.lib[k])S.lib[k]={n,preco,qtd,un}};
+ [['Farinha de trigo',6.5,2,'kg'],['Queijo mussarela',0,1,'kg'],['Camarão',70,1,'kg']].forEach(x=>L(...x));
+ const g=(n,uso,uun,perda)=>({n,preco:0,qtd:1,un:'g',uso,uun,perda:perda||0});
+ const put=(key,nome,tipo,rend,un,ings=[],parts=[])=>{let p=S.preparacoes.find(x=>x.demoKey===key);if(!p){p={id:'p'+Date.now()+Math.random().toString(36).slice(2,7)};S.preparacoes.push(p)}Object.assign(p,{demoKey:key,nome,tipo,rend,un,ings,parts});return p.id};
+ const massaC=put('demo-massa-coxinha','Massa tradicional de coxinha','Massa',4.68,'kg',[g('Farinha de trigo',1800,'g'),g('Leite integral',1200,'ml'),g('Água',1500,'ml'),g('Margarina',150,'g'),g('Sal',30,'g'),g('Caldo de galinha',3,'un')]);
+ let item;
+ if(tipo==='bolinho'){
+  if(S.items.some(x=>x.demoKey==='demo-bolinho-queijo'))return toast('Bolinho de queijo já está na sua lista');
+  item={id:'i'+Date.now()+'bq',demoKey:'demo-bolinho-queijo',priceMode:'porcao',loteNome:'Produção de bolinhos de queijo',unidadeNome:'bolinhos',porcaoNome:'Unidade',nome:'Bolinho de queijo (320 un. — 20 g méd.)',cat:'Salgados',rend:320,porcao:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[g('Queijo mussarela',2300,'g')],preps:[{id:massaC,q:2,un:'kg'}]};
+ }else{
+  if(S.items.some(x=>x.demoKey==='demo-croquete-camarao'))return toast('Croquete de camarão já está na sua lista');
+  item={id:'i'+Date.now()+'cc',demoKey:'demo-croquete-camarao',priceMode:'porcao',loteNome:'Produção de croquetes de camarão',unidadeNome:'croquetes',porcaoNome:'Unidade',nome:'Croquete de camarão (300 un.)',cat:'Salgados',rend:300,porcao:1,emb:0,mo:0,gas:0,maquina:0,final:'',ings:[g('Farinha de trigo',4000,'g'),g('Camarão',1800,'g')],preps:[]};
+ }
+ S.items.push(item);S.sel=item.id;show('itens');renderList();renderEd();save();toast((tipo==='bolinho'?'Bolinho de queijo':'Croquete de camarão')+' adicionado aos produtos');
+}
+function biz(){const n=(S.cfg.nome||'').trim()||'Meu Negócio';$('#bizn').textContent=n;const a=$('#av');a.innerHTML=S.cfg.logo?'':$('.brand .mark').innerHTML;a.style.background=S.cfg.logo?'#fff url('+S.cfg.logo+') center/cover':''}
 $('#nome').value=S.cfg.nome||'';$('#nome').oninput=e=>{S.cfg.nome=e.target.value;biz();save()};biz();
 $('#a90').checked=!!S.cfg.a90;$('#a90').onchange=e=>{S.cfg.a90=e.target.checked;refresh();renderList();save()};
 const resetBtn=$('#reset');if(resetBtn)resetBtn.onclick=async()=>{if(!confirm('Apagar todos os itens, insumos e ajustes?\nUm backup é salvo na nuvem antes.'))return;try{await bk('antes-apagar')}catch(e){if(!confirm('Não consegui salvar o backup na nuvem. Apagar mesmo assim?'))return}try{localStorage.setItem('pdb',JSON.stringify({_base:S._base||0,_dirty:1}))}catch(e){}location.reload()};
